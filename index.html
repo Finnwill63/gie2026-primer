@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIE 2026 — Nordic City Primer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fi: #003580;
+    --fi-light: #e8eef8;
+    --fi-accent: #0057A8;
+    --ee: #0072CE;
+    --ee-light: #e6f2fc;
+    --ee-accent: #1A3A5C;
+    --se: #006AA7;
+    --se-light: #e6f4fb;
+    --se-accent: #FECC02;
+    --dark: #111827;
+    --mid: #374151;
+    --soft: #6B7280;
+    --cream: #FDFAF5;
+    --card-bg: #FFFFFF;
+    --border: #E5E7EB;
+    --active-city: var(--fi);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0A1628 0%, #1a2f52 50%, #0d2444 100%);
+    color: white;
+    text-align: center;
+    padding: 64px 24px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(0,85,168,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 20%, rgba(0,106,167,0.2) 0%, transparent 50%);
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 7vw, 70px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    position: relative;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: rgba(255,255,255,0.65);
+  }
+  .hero-sub {
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+  .trip-dates {
+    display: inline-flex;
+    gap: 12px;
+    margin-top: 28px;
+    position: relative;
+  }
+  .date-pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+  }
+  .date-pill strong { color: white; font-weight: 500; }
+
+  /* ── CITY NAV ── */
+  .city-nav {
+    display: flex;
+    background: var(--dark);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+  }
+  .city-btn {
+    flex: 1;
+    padding: 16px 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-bottom: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .city-btn .flag { font-size: 20px; line-height: 1; }
+  .city-btn:hover { color: rgba(255,255,255,0.75); }
+  .city-btn.active { color: white; }
+  .city-btn.active.fi { border-bottom-color: #0057A8; }
+  .city-btn.active.ee { border-bottom-color: #0072CE; }
+  .city-btn.active.se { border-bottom-color: #FECC02; color: #FECC02; }
+
+  /* ── PANELS ── */
+  .city-panel { display: none; }
+  .city-panel.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    padding: 40px 24px 8px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .city-hero {
+    padding: 40px 24px 24px;
+    position: relative;
+  }
+  .city-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 16px;
+    padding: 32px 36px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .fi .city-hero-inner { background: linear-gradient(135deg, #003580, #0057A8); }
+  .ee .city-hero-inner { background: linear-gradient(135deg, #1A3A5C, #0072CE); }
+  .se .city-hero-inner { background: linear-gradient(135deg, #004B76, #006AA7); }
+
+  .city-hero-inner::after {
+    content: attr(data-city-char);
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 140px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.07);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .city-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .city-tagline {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+    letter-spacing: 0.03em;
+  }
+  .city-stats {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .stat { }
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── CONTENT GRID ── */
+  .content-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width: 640px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .span-2 { grid-column: 1; }
+  }
+  .span-2 { grid-column: 1 / -1; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: box-shadow 0.2s ease;
+  }
+  .card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .card-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title-icon { font-size: 15px; }
+
+  /* ── QUICK FACTS ── */
+  .fact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+    gap: 12px;
+  }
+  .fact-row:last-child { border-bottom: none; }
+  .fact-label { color: var(--soft); font-size: 13px; flex-shrink: 0; }
+  .fact-val { font-weight: 500; text-align: right; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .badge-green { background: #D1FAE5; color: #065F46; }
+  .badge-yellow { background: #FEF3C7; color: #92400E; }
+  .badge-blue { background: #DBEAFE; color: #1E40AF; }
+  .badge-red { background: #FEE2E2; color: #991B1B; }
+
+  /* ── LISTS ── */
+  .item-list { list-style: none; }
+  .item-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .fi .item-list .dot { color: #0057A8; }
+  .ee .item-list .dot { color: #0072CE; }
+  .se .item-list .dot { color: #006AA7; }
+
+  /* ── EVENTS ── */
+  .event-card {
+    background: #F9FAFB;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 3px solid;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .fi .event-card { border-left-color: #0057A8; }
+  .ee .event-card { border-left-color: #0072CE; }
+  .se .event-card { border-left-color: #FECC02; }
+  .event-dates {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--soft);
+    flex-shrink: 0;
+    min-width: 70px;
+  }
+  .event-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .event-desc { font-size: 13px; color: var(--soft); line-height: 1.4; }
+
+  /* ── DO / DON'T ── */
+  .dos-donts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 500px) { .dos-donts { grid-template-columns: 1fr; } }
+  .do-col, .dont-col { border-radius: 10px; padding: 16px; }
+  .do-col { background: #F0FDF4; }
+  .dont-col { background: #FFF1F2; }
+  .do-col h4 { color: #166534; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+  .dont-col h4 { color: #9F1239; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+  .do-col li, .dont-col li {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 5px 0;
+    list-style: none;
+    padding-left: 18px;
+    position: relative;
+  }
+  .do-col li::before { content: '✓'; position: absolute; left: 0; color: #16A34A; font-weight: 700; }
+  .dont-col li::before { content: '✗'; position: absolute; left: 0; color: #DC2626; font-weight: 700; }
+
+  /* ── FOOD GRID ── */
+  .food-item {
+    background: #F9FAFB;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .food-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .food-desc { font-size: 13px; color: var(--soft); line-height: 1.45; }
+  .food-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  /* ── NEIGHBORHOOD ── */
+  .hood {
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+  .hood-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .hood-vibe { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .fi .hood-vibe { color: #0057A8; }
+  .ee .hood-vibe { color: #0072CE; }
+  .se .hood-vibe { color: #006AA7; }
+  .hood-desc { font-size: 13px; color: var(--soft); line-height: 1.5; }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.55;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alert-yellow { background: #FFFBEB; border: 1px solid #FDE68A; }
+  .alert-blue { background: #EFF6FF; border: 1px solid #BFDBFE; }
+  .alert-green { background: #F0FDF4; border: 1px solid #BBF7D0; }
+
+  /* ── SECTION DIVIDER ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--soft);
+    padding: 24px 0 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  /* ── TRANSPORT ── */
+  .transport-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+  }
+  .transport-item:last-child { border-bottom: none; }
+  .transport-icon { font-size: 22px; flex-shrink: 0; }
+  .transport-label { font-weight: 600; margin-bottom: 2px; }
+  .transport-desc { font-size: 13px; color: var(--soft); line-height: 1.4; }
+
+  /* ── FOOTER ── */
+  .primer-footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 13px;
+  }
+  .primer-footer strong { color: rgba(255,255,255,0.75); }
+
+  /* ── ANIMATIONS ── */
+  .city-panel.active .city-hero-inner { animation: fadeUp 0.4s ease; }
+  .city-panel.active .card { animation: fadeUp 0.4s ease both; }
+  .city-panel.active .card:nth-child(2) { animation-delay: 0.05s; }
+  .city-panel.active .card:nth-child(3) { animation-delay: 0.1s; }
+  .city-panel.active .card:nth-child(4) { animation-delay: 0.15s; }
+  .city-panel.active .card:nth-child(5) { animation-delay: 0.2s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">GIE 2026 · Kenan-Flagler Business School</div>
+  <h1>Nordic City<br><em>Primer</em></h1>
+  <p class="hero-sub">Helsinki · Tallinn · Stockholm — Your essential guide for first-time American visitors</p>
+  <div class="trip-dates">
+    <div class="date-pill">🇫🇮 <strong>Helsinki</strong> May 12–16</div>
+    <div class="date-pill">🇪🇪 <strong>Tallinn</strong> May 17 (day trip)</div>
+    <div class="date-pill">⛴ <strong>Overnight Ferry</strong> May 18 HEL→STK</div>
+    <div class="date-pill">🇸🇪 <strong>Stockholm</strong> May 19–22</div>
+  </div>
+</div>
+
+<!-- CITY NAV -->
+<nav class="city-nav">
+  <button class="city-btn fi active" onclick="showCity('fi')">
+    <span class="flag">🇫🇮</span>Helsinki
+  </button>
+  <button class="city-btn ee" onclick="showCity('ee')">
+    <span class="flag">🇪🇪</span>Tallinn
+  </button>
+  <button class="city-btn se" onclick="showCity('se')">
+    <span class="flag">🇸🇪</span>Stockholm
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     HELSINKI
+═══════════════════════════════════════════════ -->
+<div class="city-panel fi active" id="panel-fi">
+  <div class="city-hero fi">
+    <div class="city-hero-inner" data-city-char="H">
+      <div class="city-name">Helsinki</div>
+      <div class="city-tagline">Finland's design-forward capital on the Baltic — reserved on the outside, extraordinary within</div>
+      <div class="city-stats">
+        <div class="stat"><div class="stat-val">~660K</div><div class="stat-label">Population</div></div>
+        <div class="stat"><div class="stat-val">€€€</div><div class="stat-label">Cost Level</div></div>
+        <div class="stat"><div class="stat-val">17–19°C</div><div class="stat-label">May Avg Temp</div></div>
+        <div class="stat"><div class="stat-val">18+ hrs</div><div class="stat-label">Daylight in May</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid fi">
+
+    <!-- QUICK FACTS -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
+      <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Euro (€) — cards everywhere</span></div>
+      <div class="fact-row"><span class="fact-label">Language</span><span class="fact-val">Finnish / English (excellent)</span></div>
+      <div class="fact-row"><span class="fact-label">Tipping</span><span class="fact-val"><span class="badge badge-green">Not expected</span></span></div>
+      <div class="fact-row"><span class="fact-label">Cash needed?</span><span class="fact-val"><span class="badge badge-green">Rarely — tap to pay</span></span></div>
+      <div class="fact-row"><span class="fact-label">Safety</span><span class="fact-val"><span class="badge badge-green">Very High</span></span></div>
+      <div class="fact-row"><span class="fact-label">Coffee culture</span><span class="fact-val">Finland = #1 coffee consumer globally</span></div>
+    </div>
+
+    <!-- BUDGET GUIDE -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">💶</span>Budget in USD (approx.)</div>
+      <div class="fact-row"><span class="fact-label">Coffee / kahvi</span><span class="fact-val">$4–6</span></div>
+      <div class="fact-row"><span class="fact-label">Lunch special (lounas)</span><span class="fact-val">$12–16 incl. bread+salad</span></div>
+      <div class="fact-row"><span class="fact-label">Dinner, mid-range</span><span class="fact-val">$25–45 per person</span></div>
+      <div class="fact-row"><span class="fact-label">Beer at a bar</span><span class="fact-val">$8–12</span></div>
+      <div class="fact-row"><span class="fact-label">Public transit day</span><span class="fact-val">$10 (day ticket)</span></div>
+      <div class="fact-row"><span class="fact-label">Sauna entry</span><span class="fact-val">$15–25 (Löyly, Allas)</span></div>
+      <div class="fact-row"><span class="fact-label">Ferry to Suomenlinna</span><span class="fact-val">$3.50 (HSL ticket)</span></div>
+    </div>
+
+    <!-- CULTURE & ETIQUETTE -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🧭</span>Culture & Etiquette — What Americans Get Wrong</div>
+      <div class="dos-donts">
+        <div class="do-col">
+          <h4>✓ Do This</h4>
+          <ul>
+            <li>Say hello and be friendly — just keep the volume moderate on transit</li>
+            <li>Give people personal space — even in queues, stay back</li>
+            <li>Say yes to a sauna invitation immediately. Always.</li>
+            <li>Use Finnish words: <em>kiitos</em> (thanks), <em>hei</em> (hi), <em>anteeksi</em> (sorry)</li>
+            <li>Trust what Finns say — they mean it literally</li>
+            <li>Take off your shoes in someone's home</li>
+            <li>Order the lunch special (lounas) — best value in the city</li>
+          </ul>
+        </div>
+        <div class="dont-col">
+          <h4>✗ Don't Do This</h4>
+          <ul>
+            <li>Don't be loud and boisterous on public transport — moderate volume is the norm, not silence</li>
+            <li>Don't mistake quiet for coldness — it's respect, not rejection</li>
+            <li>Don't perform enthusiasm — Finns understate. Match their register</li>
+            <li>Don't jaywalk — Finns wait for the green, always</li>
+            <li>Don't haggle — prices are fixed and that is that</li>
+            <li>Don't snap photos in the sauna — deeply inappropriate</li>
+            <li>Don't over-explain or over-share with strangers — brevity is respected</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAUNA GUIDE -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🔥</span>The Sauna — Finland's Sacred Institution</div>
+      <div class="alert alert-blue" style="margin-bottom:16px">
+        <span class="alert-icon">💡</span>
+        <span>Finland has <strong>3.3 million saunas for 5.5 million people.</strong> This is not a spa amenity — it is a cultural cornerstone. You will very likely be invited. Say yes. Here's how to not embarrass yourself.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="food-item">
+            <div class="food-name">🚿 Shower first. Always.</div>
+            <div class="food-desc">Shower before entering — every single time. It's hygienic and expected. Finnish tap water is among the world's cleanest.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">👙 Mixed vs Same-Gender</div>
+            <div class="food-desc">Public mixed saunas (Löyly, Allas): swimsuits required. Same-gender saunas: nudity is the tradition. Bring a small towel to sit on.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">💧 The Löyly (Steam)</div>
+            <div class="food-desc">Throwing water on the hot stones creates steam — called <em>löyly</em>. Anyone can do this. Ask first if someone else is sitting nearby. The birch whisk (<em>vihta</em>) in summer = pure ritual.</div>
+          </div>
+        </div>
+        <div>
+          <div class="food-item">
+            <div class="food-name">❄️ The Cold Plunge</div>
+            <div class="food-desc">After the heat, you cool down: cold shower, or a plunge into the Baltic. In May it's cold (10–12°C). Do it anyway — the endorphin rush is extraordinary.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🤫 Silence is Golden</div>
+            <div class="food-desc">Sauna is meditative. Light conversation is fine. Loud, performative talk is not. Read the room. The sauna is where Finns open up — but on their terms.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">📍 Best Saunas in Helsinki</div>
+            <div class="food-desc"><strong>Löyly</strong> — iconic waterfront, book ahead. <strong>Allas Sea Pool</strong> — Baltic sea swimming included. <strong>Kotiharjun Sauna</strong> — historic, traditional, wood-fired (Est. 1928).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEIGHBORHOODS -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🗺</span>Neighborhoods to Know</div>
+      <div class="hood">
+        <div class="hood-name">Design District / Punavuori</div>
+        <div class="hood-vibe">Design · Galleries · Brunch</div>
+        <div class="hood-desc">Helsinki's creative heartland. Boutiques, architecture studios, the Design Museum. Best for a Saturday morning wander.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Kallio</div>
+        <div class="hood-vibe">Nightlife · Indie · Local</div>
+        <div class="hood-desc">Working-class turned trendy. Where Helsinkians actually go out. Bars, tattoo parlors, ethnic food. The real city.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Hakaniemi</div>
+        <div class="hood-vibe">Market · Locals · Authentic</div>
+        <div class="hood-desc">Covered market hall + outdoor market. Karelian pies, Finnish textiles, coffee. Zero tourists.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Töölö / Waterfront</div>
+        <div class="hood-vibe">Parks · Views · Museums</div>
+        <div class="hood-desc">Walk the esplanade, see the Opera House, stroll to the Olympic Stadium. Stunning in May light.</div>
+      </div>
+    </div>
+
+    <!-- FOOD & DRINK -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🍽</span>Eat & Drink — The Helsinki List</div>
+      <div class="food-item">
+        <div class="food-name">Karjalanpiirakka (Karelian Pie)</div>
+        <div class="food-desc">Rye crust, rice filling, topped with egg butter. Finland's national snack. Get it everywhere. Perfection in simplicity.</div>
+        <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Must Try</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Lohikeitto (Salmon Soup)</div>
+        <div class="food-desc">Creamy dill salmon chowder with potatoes and leeks. The comfort food of Finland. Order it. Non-negotiable.</div>
+        <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Must Try</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Saaristolaisleipä (Archipelago Bread)</div>
+        <div class="food-desc">Dark, slightly sweet rye bread with a dense, moist crumb — baked with molasses and malt. Unlike the sour rye bread, this version has a more complex sweetness. Served at Konstan Möljä and Sea Horse.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Ruisleipä (Rye Bread)</div>
+        <div class="food-desc">Dense, dark, slightly sour sourdough rye. Finnish superpower food. With butter and cheese = breakfast of champions.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Korvapuusti (Cinnamon Bun)</div>
+        <div class="food-desc">Finland's cinnamon roll is flatter, cardamom-spiced, and vastly superior to anything Cinnabon ever produced.</div>
+      </div>
+    </div>
+
+    <!-- MUST SEE -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">📍</span>Don't Miss — Helsinki Experiences</div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Suomenlinna Sea Fortress</strong> — Your group visits Wednesday evening (May 13) for your <strong>welcome dinner</strong> — a perfect introduction to Helsinki. UNESCO World Heritage Site built by Sweden in 1748 on six linked islands. You'll arrive by HSL ferry (15 min from Market Square). The island has lived under Swedish, Russian, and Finnish rule — walking its stone walls and gun batteries at 9pm in golden light is an experience you'll remember for years. <em>Go early on the ferry if free time allows before the group dinner.</em></div></li>
+        <li><span class="dot"></span><div><strong>Temppeliaukio Church</strong> — Rock Church carved into living granite. One of the world's great architectural statements.</div></li>
+        <li><span class="dot"></span><div><strong>Senate Square + Cathedral</strong> — The neoclassical postcard of Helsinki. Go at magic hour (10pm in May — it's light).</div></li>
+        <li><span class="dot"></span><div><strong>Market Square (Kauppatori)</strong> — Harbour market. Fresh berries, salmon, tourist kitsch and locals. Morning ritual.</div></li>
+        <li><span class="dot"></span><div><strong>Kamppi Chapel of Silence</strong> — A wooden chapel in the middle of a shopping area. 10 minutes of actual silence in the city. Profound.</div></li>
+        <li><span class="dot"></span><div><strong>Oodi Library</strong> — Possibly the world's best public library. Modern architecture + free to enter + Finnish design everywhere.</div></li>
+      </ul>
+    </div>
+
+    <!-- TRANSPORT -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🚌</span>Getting Around Helsinki</div>
+      <div class="transport-item">
+        <span class="transport-icon">🚋</span>
+        <div><div class="transport-label">Trams (Raitiovaunu)</div><div class="transport-desc">The best way to move. Line 2 and 3 cover most tourist stops. Day ticket covers all transit.</div></div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚇</span>
+        <div><div class="transport-label">Metro</div><div class="transport-desc">One main line + west extension. Useful for Kamppi ↔ city center ↔ Airport (via train from Pasila).</div></div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">⛴️</span>
+        <div><div class="transport-label">Ferries</div><div class="transport-desc">HSL ticket covers Suomenlinna ferry. JT-Line runs to other islands. The water is everywhere — use it.</div></div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚲</span>
+        <div><div class="transport-label">City Bikes (Fillarit)</div><div class="transport-desc">Available May–October. App-based. Flat city = perfect cycling. Best way to see the waterfront.</div></div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">✈️</span>
+        <div><div class="transport-label">Helsinki Airport (HEL)</div><div class="transport-desc">Train I/P from city center — 30 min, very cheap. Never take a taxi unnecessarily.</div></div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">📅</span>Your Helsinki Week — May 12–16, 2026</div>
+
+      <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid #BBF7D0">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#065F46;margin-bottom:10px">📋 Programme Overview</div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:6px 14px;font-size:13px">
+          <div style="font-weight:700;color:#065F46">Tue May 12</div><div>Arrive Helsinki · Eurovision Semi-Final 1 evening (Finland performs!)</div>
+          <div style="font-weight:700;color:#065F46">Wed May 13</div><div>City orientation · <strong>Suomenlinna welcome dinner (evening)</strong></div>
+          <div style="font-weight:700;color:#065F46">Thu May 14</div><div>Programme activities · Eurovision Semi-Final 2 evening</div>
+          <div style="font-weight:700;color:#065F46">Fri May 15</div><div>Programme activities · Helsinki City Run energy in the streets</div>
+          <div style="font-weight:700;color:#065F46">Sat May 16</div><div><strong>Nuuksio National Park (day)</strong> · Eurovision Grand Final evening 🏆</div>
+          <div style="font-weight:700;color:#065F46">Sun May 17</div><div>Tallinn day trip — ferry morning, return evening</div>
+          <div style="font-weight:700;color:#065F46">Mon May 18</div><div>Helsinki free day · Overnight ferry to Stockholm departs evening</div>
+        </div>
+      </div>
+
+      <div class="event-card" style="border-left-color:#16A34A">
+        <div class="event-dates" style="color:#065F46">Wed May 13<br>Evening</div>
+        <div>
+          <div class="event-name">🏰 Suomenlinna Welcome Dinner — Your Group Event</div>
+          <div class="event-desc">Your official welcome to Finland. Suomenlinna is a UNESCO World Heritage sea fortress built in 1748 on six linked islands — 15 minutes by ferry from Market Square. It has defended three nations: Sweden, Russia, and Finland. Walking the stone ramparts and gun batteries in the long May evening light is one of the great Helsinki experiences. The ferry runs every 40 minutes from Kauppatori (Market Square) — arrive early if you want to explore before dinner. The island is home to ~850 permanent residents, museums, cafés, and extraordinary history. Wear comfortable shoes — the paths are cobblestone and uneven.</div>
+        </div>
+      </div>
+
+      <div class="event-card" style="border-left-color:#16A34A">
+        <div class="event-dates" style="color:#065F46">Sat May 16<br>All Day</div>
+        <div>
+          <div class="event-name">🌲 Nuuksio National Park — Your Group Activity</div>
+          <div class="event-desc">See full Nuuksio section below. Spend much of Saturday in Finland's wildest national park, just 30km from Helsinki. Ancient forests, dozens of lakes, marked trails, campfire spots with free firewood. In May: fresh spring foliage, birdsong everywhere, lakes starting to warm, no mosquitoes yet. This is Finland's soul beyond the city — as important as anything you'll see in Helsinki.</div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-dates">May 13–17</div>
+        <div>
+          <div class="event-name">Helsinki Music Week</div>
+          <div class="event-desc">Indie, electronic, and experimental music across multiple club venues at Dance House Helsinki. One of the best boutique music discovery festivals in Scandinavia. Wristbands available — great nightlife option.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 15–16</div>
+        <div>
+          <div class="event-name">Helsinki City Run</div>
+          <div class="event-desc">Annual running event through central Helsinki. Even if you're not racing, the city feels electric on race day — streets close, crowds gather, great energy near the Esplanade.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 15</div>
+        <div>
+          <div class="event-name">Estonian Ascension Day (public holiday)</div>
+          <div class="event-desc">⚠️ If traveling by Tallinn ferry on May 15, note this is a public holiday in Estonia and may affect ferry schedules. Book in advance.</div>
+        </div>
+      </div>
+      <div class="event-card" style="border-left-color:#FFD700;background:#FFFBEB">
+        <div class="event-dates" style="color:#92400E">🎤 May 12<br>Tue 21:00<br>CEST</div>
+        <div>
+          <div class="event-name" style="color:#78350F">Eurovision Semi-Final 1 — <em>Finland performs!</em></div>
+          <div class="event-desc"><strong>Your first night in Helsinki</strong> — and Finland competes in the first half of Semi-Final 1. <strong>🇫🇮 Linda Lampenius &amp; Pete Parkkonen</strong> perform <em>Liekinheitin</em> ("Flamethrower") — a wildly ambitious fusion of classical violin, pop, and rock that went #1 in Finland. Watch it with locals who are genuinely invested. Starts 10pm Helsinki time (21:00 Vienna / CEST). Stream on Yle Areena (free, no account needed in Finland) or head to a venue below.</div>
+        </div>
+      </div>
+      <div class="event-card" style="border-left-color:#FFD700;background:#FFFBEB">
+        <div class="event-dates" style="color:#92400E">🎤 May 14<br>Thu 21:00<br>CEST</div>
+        <div>
+          <div class="event-name" style="color:#78350F">Eurovision Semi-Final 2</div>
+          <div class="event-desc">Finland doesn't compete (they're already through or out from Tuesday), but Semi-Final 2 features strong entries. Estonia's Vanilla Ninja are competing, which will have extra resonance after your Tallinn day trip on May 17. Good venue night in Helsinki — watch parties will be active.</div>
+        </div>
+      </div>
+      <div class="event-card" style="border-left-color:#FFD700;background:#FFFBEB">
+        <div class="event-dates" style="color:#92400E">🏆 May 16<br>Sat 21:00<br>CEST</div>
+        <div>
+          <div class="event-name" style="color:#78350F">Eurovision Grand Final — The Main Event</div>
+          <div class="event-desc">The Grand Final in Vienna. 25 countries, huge production, and <em>Liekinheitin</em> is one of the bookmakers' favourites to win — Finland is currently ranked near the top of betting odds. If Finland wins, Helsinki will erupt. Your last full night in Helsinki before the Tallinn day trip. Go to a venue. This is unmissable.</div>
+        </div>
+      </div>
+
+      <div style="background:#1C1917;border-radius:12px;padding:18px 20px;margin:8px 0">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#FCD34D;margin-bottom:12px">📍 Where to Watch in Helsinki</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;color:rgba(255,255,255,0.85)">
+          <div>
+            <div style="font-weight:700;color:white;margin-bottom:4px">DTM Club — Iso Roobertinkatu 28</div>
+            <div style="color:rgba(255,255,255,0.65);font-size:12px;line-height:1.5">Helsinki's legendary LGBTQ+ club that runs the city's most celebrated Eurovision parties every year. Extremely welcoming to everyone — described as "straight-friendly" by regulars. Festive atmosphere, big screens, crowd commentary. Book a table. Kallio/Punavuori border, easy walk from the hotel.</div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:white;margin-bottom:4px">Konepaja Biergarten — Sörnäinen</div>
+            <div style="color:rgba(255,255,255,0.65);font-size:12px;line-height:1.5">Berlin-style outdoor terrace, known for showing Eurovision on a giant screen across the contest week. Good energy, casual atmosphere. Check their Facebook page for 2026 event listings as May approaches.</div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:white;margin-bottom:4px">Sports Bar / Casino Helsinki — Railway Station area</div>
+            <div style="color:rgba(255,255,255,0.65);font-size:12px;line-height:1.5">The Sports Bar inside Casino Helsinki reliably screens Eurovision semi-finals and the final on large screens. Directly opposite the main railway station — extremely easy to find. Free entry to Sports Bar area.</div>
+          </div>
+          <div>
+            <div style="font-weight:700;color:white;margin-bottom:4px">Yle Areena — Your Phone / Hotel TV</div>
+            <div style="color:rgba(255,255,255,0.65);font-size:12px;line-height:1.5">Finland's public broadcaster streams all three shows free on areena.yle.fi — no account needed when accessed from a Finnish IP. Available in English. Perfect if you want to watch together in a hotel room before heading out.</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);font-size:12px;color:rgba(255,255,255,0.5)">All shows start at 22:00 Helsinki time (21:00 CEST / Vienna time). Finland is UTC+3 in May.</div>
+      </div>
+
+      <div class="alert alert-yellow" style="margin-top:8px">
+        <span class="alert-icon">🌞</span>
+        <span><strong>The Light:</strong> In mid-May, Helsinki gets 18+ hours of daylight. The sun sets around 10:30pm and it never gets fully dark. Eurovision finales running past midnight means you'll leave the venue at 1am into near-daylight. This will feel surreal. It is.</span>
+      </div>
+    </div>
+
+    <!-- NUUKSIO -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🌲</span>Nuuksio National Park — Saturday May 16</div>
+      <div class="alert alert-green" style="margin-bottom:16px">
+        <span class="alert-icon">🇫🇮</span>
+        <span>Nuuksio is <strong>Finland's soul made visible</strong>. Just 30km from Helsinki — about 35 minutes by car — this is where Helsinki residents go to remember what their country actually is: ancient boreal forest, silent lakes, granite outcrops, and air that smells like pine and earth. It is profoundly different from city Finland, and one of the best things about your whole trip. May is perfect timing: new spring foliage, endless birdsong, no mosquitoes yet, lakes still cold-clear.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="food-item">
+            <div class="food-name">🗺 What Nuuksio Is</div>
+            <div class="food-desc"><strong>45 sq km</strong> of protected boreal forest, wetlands, and highland lakes — established as a national park in 1994. Around 30 lakes and ponds within the park. Eight marked hiking trails from 1.5km to 17km. The landscape is shaped by Ice Age glaciers: valleys, gorges, rocky hills covered in lichen and sparse pine. Home to the Siberian flying squirrel (the park's emblem), the European nightjar, and dozens of endangered species.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🥾 What to Expect in May</div>
+            <div class="food-desc">Spring in Nuuksio is extraordinary — light green leaves just opening, wildflowers beginning, lakes bright and cold. Trails are in summer condition by mid-May. <strong>No biting insects yet</strong> (mosquitoes arrive late May / early June). Water is too cold to swim comfortably but the lake edges are stunning. Dress in layers — forest is 2–3°C cooler than Helsinki city. Waterproof shoes strongly recommended; some trail sections may be muddy.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🏠 Finnish Nature Centre Haltia</div>
+            <div class="food-desc">The gateway to the park — a stunning all-wood building that's the first public building in Finland constructed entirely of timber. Exhibitions on Finnish nature and national parks, a restaurant serving lunch, equipment rental, and guided hike booking. Trails into the park start from Haltia's doorstep. Worth 30 minutes before heading in.</div>
+          </div>
+        </div>
+        <div>
+          <div class="food-item">
+            <div class="food-name">🔥 The Finnish Campfire Tradition</div>
+            <div class="food-desc">Nuuksio has designated campfire spots throughout the park with <strong>free firewood provided</strong>. Making a fire and cooking over it is one of Finland's most cherished outdoor rituals — and you can do it here legally and freely. If the group stops at a fire spot, this is the most authentically Finnish experience of the entire trip. It beats any restaurant.</div>
+            <span class="food-tag" style="background:#D1FAE5;color:#065F46">Quintessentially Finnish</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">📍 Key Trails for Groups</div>
+            <div class="food-desc">
+              <strong>Korpin kierros (8km)</strong> — recommended for first-time visitors, starts from Haukkalampi nature hut. Forest landscape, lakes, bog views. Takes 2.5–3 hours at a comfortable pace.<br><br>
+              <strong>Haukankierros (4km)</strong> — shorter loop from Haukkalampi, good for varied abilities. Includes a rocky viewpoint over Myllypuro valley.<br><br>
+              <strong>Maahisenkierros (2km)</strong> — accessible circular trail suitable for all mobility levels. Good for a quick immersion if time is limited.
+            </div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🎒 What to Bring</div>
+            <div class="food-desc">Waterproof shoes or trail runners (not sandals). Layers — a windproof jacket, thin fleece. Water bottle — there's a tap at Haukkalampi cabin. Snacks. Your phone with AllTrails or maps.me downloaded offline — trails intersect in complex ways. A small daypack. Sunscreen — May light at this latitude is stronger than it feels.</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-yellow" style="margin-top:12px">
+        <span class="alert-icon">🌙</span>
+        <span><strong>Saturday double-header:</strong> You spend much of the day in Nuuksio, then return to Helsinki for the <strong>Eurovision Grand Final</strong> in the evening (starts 22:00). This is an extraordinary day — ancient Finnish forest in the afternoon, Europe's biggest pop spectacle at night. Pack accordingly: comfortable trail clothes to change out of, something warmer for the evening.</span>
+      </div>
+    </div>
+
+    <!-- HOTEL HELSINKI -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🏨</span>Your Base — Scandic Helsinki Hub, Annankatu 18</div>
+      <div class="alert alert-green" style="margin-bottom:16px">
+        <span class="alert-icon">📍</span>
+        <span>You're in <strong>Kamppi / southern Design District</strong> — arguably the best location in Helsinki. The Esplanade is a 10-minute walk, Kamppi Chapel of Silence is 5 minutes, and the Design District is literally on your doorstep. The Old Church Park (Vanha kirkkopuisto) is right outside the front door — a lovely spot for morning coffee.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="food-item">
+            <div class="food-name">🍽 Konstan Möljä <span style="font-weight:400;font-size:12px;color:#6B7280">— 12 min walk, Hietalahdenkatu 14</span></div>
+            <div class="food-desc">A Helsinki institution since 1981. <strong>All-you-can-eat Finnish buffet</strong> featuring sautéed reindeer, Karelian stew, oven-baked salmon, Karelian pies, archipelago bread, and daily soup. Dinner buffet ~€22. Lunch buffet (Tue–Fri) excellent value. This is the real thing — a cozy, family-run tavern with a maritime soul. Book ahead for dinner.</div>
+            <span class="food-tag" style="background:#D1FAE5;color:#065F46">Must Do — Authentic Finnish</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🐟 Restaurant Sea Horse <span style="font-weight:400;font-size:12px;color:#6B7280">— 15 min walk, Kapteeninkatu 11</span></div>
+            <div class="food-desc">Helsinki's most legendary Finnish bistro, open since 1933. Beloved by artists, sailors and locals for 90+ years — regulars call it <em>Sikala</em> (The Pigsty), affectionately. Fried Baltic herring, vorschmack, creamy salmon soup, Finnish meatballs with lingonberry, reindeer sauté. Vintage interior, generous portions, no pretension. Reserve — it fills fast.</div>
+            <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">90-Year Institution</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🍽 Restaurant Muru <span style="font-weight:400;font-size:12px;color:#6B7280">— 150m walk, Fredrikinkatu 41</span></div>
+            <div class="food-desc">Michelin-noted French-Nordic bistro, 150 metres from the hotel front door. Seasonal Finnish ingredients, outstanding wine list (550+ bottles), intimate atmosphere. 4-course €59, 2-course €39. The special-occasion dinner of the trip. Book well in advance.</div>
+            <span class="food-tag" style="background:#FEF3C7;color:#92400E">Splurge Night</span>
+          </div>
+        </div>
+        <div>
+          <div class="food-item">
+            <div class="food-name">🍝 BasBas <span style="font-weight:400;font-size:12px;color:#6B7280">— 10 min walk, Tehtaankatu 27–29</span></div>
+            <div class="food-desc">Helsinki's most beloved casual bistro. Always packed, consistently excellent. Great tartare, outstanding natural wine value, warm atmosphere. Show up at 4:30pm without a reservation or book ahead. Popular with Helsinki's creative scene.</div>
+            <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Local Favorite</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">☕ Fafa's <span style="font-weight:400;font-size:12px;color:#6B7280">— multiple nearby, incl. Kamppi Mall</span></div>
+            <div class="food-desc">Helsinki's best falafel and pita chain — fast, cheap, local obsession. €10 for a filled pita. Perfect quick lunch between activities. Multiple locations within walking distance of the hotel.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🐟 Hietalahti Market Hall <span style="font-weight:400;font-size:12px;color:#6B7280">— 12 min walk, Lönnrotinkatu 34</span></div>
+            <div class="food-desc">Locals' covered market at Hietalahdentori. Finnish market food, coffee, fresh fish, Karelian pies. Much less touristy than Market Square. Great morning stop — also the starting point for the neighbourhood flea market on weekends.</div>
+            <span class="food-tag" style="background:#D1FAE5;color:#065F46">Local Secret</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-blue" style="margin-top:12px">
+        <span class="alert-icon">🚶</span>
+        <span><strong>Walk south from the hotel</strong> through the Design District (Fredrikinkatu, Uudenmaankatu, Iso Roobertinkatu) for galleries, boutiques, and Helsinki's best independent coffee spots — then continue to the waterfront for <strong>Löyly Sauna</strong> (20 min walk, book ahead) or <strong>Allas Sea Pool</strong> (20 min, Baltic swimming + sauna, swimwear OK). This 2–3 hour southward wander is one of the great Helsinki walks in May light.</span>
+      </div>
+    </div>
+
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🌙</span>Nightlife — Helsinki After Dark</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="food-item">
+            <div class="food-name">Bar scene: Kallio district</div>
+            <div class="food-desc">The neighborhood bars and craft spots of Kallio (walk north from the cathedral) are where locals go. Low-key, authentic, and less touristy than the center.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">Clubs</div>
+            <div class="food-desc">Bass Helsinki, On The Rocks (rock/indie), and Kerma are beloved. Doors typically open around 10pm. Bring your passport — ID is required, and Finnish doorstaff are thorough.</div>
+          </div>
+        </div>
+        <div>
+          <div class="food-item">
+            <div class="food-name">📍 Helsinki Music Week</div>
+            <div class="food-desc">May 13–17 — multiple club and venue performances across the city. Wristbands available. Excellent for discovering Nordic and European indie and electronic acts in intimate settings.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🌞 The Light Effect on Nights Out</div>
+            <div class="food-desc">In mid-May it's still light at 11pm. This completely distorts your sense of time — what feels like early evening can be midnight. Set phone alarms. Many students stay out far later than intended.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TALLINN
+═══════════════════════════════════════════════ -->
+<div class="city-panel ee" id="panel-ee">
+  <div class="city-hero ee">
+    <div class="city-hero-inner" data-city-char="T">
+      <div class="city-name">Tallinn</div>
+      <div class="city-tagline">One extraordinary day: Medieval UNESCO Old Town + creative Telliskivi district — then ferry to Helsinki, overnight to Stockholm</div>
+      <div class="city-stats">
+        <div class="stat"><div class="stat-val">May 17</div><div class="stat-label">Your Day</div></div>
+        <div class="stat"><div class="stat-val">€€</div><div class="stat-label">Cost Level</div></div>
+        <div class="stat"><div class="stat-val">2.5 hrs</div><div class="stat-label">Ferry from Helsinki</div></div>
+        <div class="stat"><div class="stat-val">~14 hrs</div><div class="stat-label">Max time in city</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid ee">
+
+    <!-- ORIENTATION -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🏰</span>Two Tallinns — Your Essential Frame</div>
+      <div class="alert alert-blue" style="margin-bottom:16px">
+        <span class="alert-icon">⏱</span>
+        <span>You have <strong>one full day — May 17.</strong> That's actually enough to do both areas justice if you're disciplined about timing. The key: Old Town first (early morning, quiet, magical), Telliskivi second (afternoon through early evening). Don't let Old Town consume the whole day — Telliskivi is the highlight that most tourists miss entirely.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="hood">
+          <div class="hood-name">🏰 Old Town (Vanalinn)</div>
+          <div class="hood-vibe ee" style="color:#0072CE">Medieval · UNESCO · Tourism Hub</div>
+          <div class="hood-desc">One of Europe's best-preserved medieval city centers. Two parts: <strong>Toompea Hill</strong> (upper, cathedrals, views) and the <strong>Lower Town</strong> (guildhalls, Town Hall Square). Go early morning for silence and magic, leave by noon before tour groups arrive. Evening is also spectacular.</div>
+        </div>
+        <div class="hood">
+          <div class="hood-name">🎨 Telliskivi Creative City</div>
+          <div class="hood-vibe ee" style="color:#0072CE">Local · Art · Food · Bars</div>
+          <div class="hood-desc">A former Soviet factory complex — now murals, pop-up food stalls, coffee labs, design shops, Fotografiska Tallinn, and the Balti Jaama Market. 20-minute walk from Old Town or take Tram 1/2/5 to Telliskivi stop. This is where Estonians actually hang out.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK FACTS -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
+      <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Euro (€) — fully cashless</span></div>
+      <div class="fact-row"><span class="fact-label">Language</span><span class="fact-val">Estonian / English (widespread)</span></div>
+      <div class="fact-row"><span class="fact-label">Tipping</span><span class="fact-val"><span class="badge badge-yellow">5–10% appreciated</span></span></div>
+      <div class="fact-row"><span class="fact-label">Price vs Helsinki</span><span class="fact-val"><span class="badge badge-green">~30% cheaper</span></span></div>
+      <div class="fact-row"><span class="fact-label">Safety</span><span class="fact-val"><span class="badge badge-green">High (Old Town — watch pockets)</span></span></div>
+      <div class="fact-row"><span class="fact-label">Digital republic</span><span class="fact-val">e-Estonia: most bureaucracy is online</span></div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">💶</span>Budget in USD (approx.)</div>
+      <div class="fact-row"><span class="fact-label">Coffee</span><span class="fact-val">$3–5</span></div>
+      <div class="fact-row"><span class="fact-label">Casual lunch</span><span class="fact-val">$10–14</span></div>
+      <div class="fact-row"><span class="fact-label">Dinner, good restaurant</span><span class="fact-val">$20–35/person</span></div>
+      <div class="fact-row"><span class="fact-label">Beer at a bar</span><span class="fact-val">$5–8</span></div>
+      <div class="fact-row"><span class="fact-label">Tram/bus single</span><span class="fact-val">$1.50 (app) / $2 tap</span></div>
+      <div class="fact-row"><span class="fact-label">Fotografiska entry</span><span class="fact-val">~$15–18</span></div>
+      <div class="fact-row"><span class="fact-label">Old Town dinner</span><span class="fact-val"><span class="badge badge-yellow">$35–55 — you're paying for location</span></span></div>
+    </div>
+
+    <!-- OLD TOWN -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🏰</span>Old Town Must-Sees</div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Town Hall Square (Raekoja plats)</strong> — The medieval heart. Morning coffee here before crowds = magic.</div></li>
+        <li><span class="dot"></span><div><strong>Toompea Hill</strong> — Walk up for the Alexander Nevsky Cathedral (Russian Orthodox, stunning), Toompea Castle, and panoramic views.</div></li>
+        <li><span class="dot"></span><div><strong>Kohtuotsa & Patkuli Viewing Platforms</strong> — Two of the best city overlooks in the Baltics. Go at sunset (after 9pm).</div></li>
+        <li><span class="dot"></span><div><strong>St. Olaf's Church Tower</strong> — Tallinn's tallest church. Climb it for 360° views. €5.</div></li>
+        <li><span class="dot"></span><div><strong>Viru Gate & Medieval Walls</strong> — Walking the old walls is free and extraordinary. Don't skip this.</div></li>
+        <li><span class="dot"></span><div><strong>Café Maiasmokk</strong> — Opened 1864. Oldest café in Estonia. Coffee, marzipan, pastries. A living piece of history.</div></li>
+      </ul>
+    </div>
+
+    <!-- TELLISKIVI -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🎨</span>Telliskivi — The Local's Tallinn</div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Fotografiska Tallinn</strong> — World-class rotating photography museum. The Michelin-noted restaurant is also excellent even without a museum ticket.</div></li>
+        <li><span class="dot"></span><div><strong>Balti Jaama Turg (Market)</strong> — Multi-level market: fresh produce, cheeses, pickles, street food, craft beer. Like Estonian Whole Foods meets a festival.</div></li>
+        <li><span class="dot"></span><div><strong>F-Hoone</strong> — The anchor restaurant of Telliskivi. Industrial-chic, diverse menu, affordable. Great for a long lunch or dinner with beers.</div></li>
+        <li><span class="dot"></span><div><strong>Depoo</strong> — Food street made of old train cars and shipping containers. Packed on weekends with live music. Very photogenic.</div></li>
+        <li><span class="dot"></span><div><strong>Street Art</strong> — Murals cover the entire complex. Spend 30 minutes just walking and looking. Constantly updated by Estonian and international artists.</div></li>
+        <li><span class="dot"></span><div><strong>Moon Restaurant</strong> — Slavic cuisine with fine-dining craft, now relocated to Telliskivi. One of Tallinn's most interesting meals.</div></li>
+      </ul>
+    </div>
+
+    <!-- FOOD -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🍽</span>Estonian Food — What to Eat</div>
+      <div class="food-item">
+        <div class="food-name">Black Rye Bread</div>
+        <div class="food-desc">Dense, tangy, slightly sweet. The Estonian food baseline. Served with everything. Vastly underrated by the world.</div>
+        <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Staple</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Verivorst (Blood Sausage)</div>
+        <div class="food-desc">National comfort food. Traditionally Christmas, but available year-round. Worth trying — more nuanced than it sounds.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Smoked Fish</div>
+        <div class="food-desc">Baltic herring, salmon, and sprats. Eaten with rye bread and sour cream. Get it at Balti Jaama market.</div>
+        <span class="food-tag" style="background:#D1FAE5;color:#065F46">Don't Miss</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Olde Hansa Restaurant</div>
+        <div class="food-desc">Touristy? Yes. But the medieval atmosphere is genuinely extraordinary. Elk stew, mead, costumed staff. Worth it once — just don't make it your only meal.</div>
+      </div>
+    </div>
+
+    <!-- CULTURE -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🧭</span>Estonian Culture — Key Things to Know</div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Singing Nation</strong> — Estonia won its independence partly through a "Singing Revolution" (1987–1991) where 300,000 people gathered to sing national songs. Estonians take their choral traditions seriously.</div></li>
+        <li><span class="dot"></span><div><strong>Soviet History is Recent</strong> — Soviet occupation ended in 1991. Many adults you'll meet lived it. This shapes everything — the reserve, the pragmatism, the fierce pride in independence.</div></li>
+        <li><span class="dot"></span><div><strong>Digital Republic</strong> — Estonia has digital voting, digital government, e-residency. It's the most digitally advanced society on earth. Don't be surprised that everything runs on an app.</div></li>
+        <li><span class="dot"></span><div><strong>Language Note</strong> — Estonian is unrelated to any Nordic language (it's related to Finnish). English works fine everywhere in tourist areas and Telliskivi.</div></li>
+      </ul>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">📅</span>Your Day in Tallinn — May 17, 2026 + The Overnight Ferry</div>
+      <div class="alert alert-blue" style="margin-bottom:14px">
+        <span class="alert-icon">⏱</span>
+        <span><strong>You have one full day.</strong> The Tallink/Viking Line ferry from Helsinki to Tallinn takes ~2.5 hours. If you leave Helsinki early morning, you can be in Tallinn by 9–10am and have a solid 8–10 hours before heading back for your overnight ferry to Stockholm on May 18.</span>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 17 AM</div>
+        <div>
+          <div class="event-name">🏰 Old Town — Go Early, Before Crowds</div>
+          <div class="event-desc">Arrive and head straight to Toompea Hill for the Alexander Nevsky Cathedral and panoramic views. Then descend to the Lower Town (Town Hall Square, Viru Gate, city walls). Be done by noon — tour groups arrive in force after 10am.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 17 PM</div>
+        <div>
+          <div class="event-name">🎨 Telliskivi — Afternoon & Early Evening</div>
+          <div class="event-desc">Tram 1/2/5 from Balti Jaam (8 min) or walk 25 min. F-Hoone for lunch or early dinner, Fotografiska, Balti Jaama Market, street art murals. This is where your afternoon belongs.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 17</div>
+        <div>
+          <div class="event-name">🏃‍♀️ Tallinn Women's Run (LHV Maijooks)</div>
+          <div class="event-desc">Major annual running event starting at the Song Festival grounds. The city will have extra energy on this day — good atmosphere even as spectators near the finish area.</div>
+        </div>
+      </div>
+
+      <div style="background:#0A1628;border-radius:12px;padding:20px 22px;margin-top:8px;color:white">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:12px">⛴ The Overnight Ferry — May 18: Helsinki → Stockholm</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="font-size:13px;line-height:1.65;color:rgba(255,255,255,0.85)">
+            <strong style="color:white">The route:</strong> Helsinki West Harbour (Länsisatama) → Stockholm. Operated by <strong>Tallink Silja Line</strong> or <strong>Viking Line</strong>. Departs ~5–6pm, arrives Stockholm ~9–10am next morning. Crossing the Baltic at night.<br><br>
+            <strong style="color:white">The ship:</strong> These are large cruise ferries — restaurants, bars, live music, entertainment decks, shops. They're a cultural experience in themselves. Cabins are small but functional. Book early.
+          </div>
+          <div style="font-size:13px;line-height:1.65;color:rgba(255,255,255,0.85)">
+            <strong style="color:white">What to know:</strong><br>
+            • Dinner on board is a buffet — decent, skip the à la carte<br>
+            • Bar scene is lively — this is a party ferry for many Scandinavians<br>
+            • Set an alarm — arrival in Stockholm is early morning<br>
+            • The archipelago approach to Stockholm at sunrise is extraordinary
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     STOCKHOLM
+═══════════════════════════════════════════════ -->
+<div class="city-panel se" id="panel-se">
+  <div class="city-hero se">
+    <div class="city-hero-inner" data-city-char="S">
+      <div class="city-name">Stockholm</div>
+      <div class="city-tagline">14 islands, 100 museums, midnight summer light — Scandinavia's grand, beautiful, expensive capital</div>
+      <div class="city-stats">
+        <div class="stat"><div class="stat-val">~975K</div><div class="stat-label">Population</div></div>
+        <div class="stat"><div class="stat-val">€€€€</div><div class="stat-label">Cost Level</div></div>
+        <div class="stat"><div class="stat-val">16–20°C</div><div class="stat-label">May Avg Temp</div></div>
+        <div class="stat"><div class="stat-val">20+ hrs</div><div class="stat-label">Daylight in May</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid se">
+
+    <!-- QUICK FACTS -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
+      <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Swedish Krona (SEK)</span></div>
+      <div class="fact-row"><span class="fact-label">$1 USD ≈</span><span class="fact-val">~10.5 SEK (check rate)</span></div>
+      <div class="fact-row"><span class="fact-label">Cash needed?</span><span class="fact-val"><span class="badge badge-red">Almost never — Sweden is cashless</span></span></div>
+      <div class="fact-row"><span class="fact-label">Language</span><span class="fact-val">Swedish / English (perfect)</span></div>
+      <div class="fact-row"><span class="fact-label">Tipping</span><span class="fact-val"><span class="badge badge-yellow">Not expected, 5–10% appreciated</span></span></div>
+      <div class="fact-row"><span class="fact-label">Safety</span><span class="fact-val"><span class="badge badge-green">Excellent / Very High</span></span></div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">💶</span>Budget in USD (approx.)</div>
+      <div class="fact-row"><span class="fact-label">Coffee + pastry (fika)</span><span class="fact-val">$8–12</span></div>
+      <div class="fact-row"><span class="fact-label">Lunch, good spot</span><span class="fact-val">$18–28</span></div>
+      <div class="fact-row"><span class="fact-label">Dinner, mid-range</span><span class="fact-val">$40–65/person</span></div>
+      <div class="fact-row"><span class="fact-label">Beer at a bar</span><span class="fact-val">$10–14</span></div>
+      <div class="fact-row"><span class="fact-label">Metro day card</span><span class="fact-val">~$12–15</span></div>
+      <div class="fact-row"><span class="fact-label">Vasa Museum</span><span class="fact-val">$20 (worth every cent)</span></div>
+      <div class="fact-row"><span class="fact-label">Cocktail</span><span class="fact-val">$18–22 — Stockholm is the most expensive stop</span></div>
+    </div>
+
+    <!-- CULTURE -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🧭</span>Swedish Culture — What You Need to Know</div>
+      <div class="dos-donts">
+        <div class="do-col">
+          <h4>✓ Do This</h4>
+          <ul>
+            <li>Embrace <em>fika</em> — coffee + pastry as a social ritual. Join locals at a café, slow down</li>
+            <li>Be punctual — Swedes take this seriously</li>
+            <li>Queue properly. Swedes revere the queue. Do not cut</li>
+            <li>Learn: <em>hej</em> (hi), <em>tack</em> (thanks), <em>förlåt</em> (sorry)</li>
+            <li>Keep public transport at moderate volume — talking is fine, just not loud</li>
+            <li>Explore beyond Gamla Stan — Södermalm is where locals live and it's far more interesting</li>
+          </ul>
+        </div>
+        <div class="dont-col">
+          <h4>✗ Don't Do This</h4>
+          <ul>
+            <li>Don't be overly familiar too fast — Swedish social warmth is earned slowly</li>
+            <li>Don't assume Gamla Stan restaurants are the best — they're mostly overpriced tourist traps</li>
+            <li>Don't rush fika — it's a cultural ritual, not a to-go coffee moment</li>
+            <li>Don't stand on the wrong side of the escalator (stand right, walk left)</li>
+            <li>Don't skip the Vasa Museum — it is genuinely unmissable</li>
+            <li>Don't be loudly performative on transit — not forbidden, just jarring</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIKA EXPLAINED -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">☕</span>Fika — Sweden's Most Important Concept</div>
+      <div class="alert alert-blue" style="margin-bottom:14px">
+        <span class="alert-icon">💡</span>
+        <span><em>Fika</em> is not just coffee. It's a deliberate pause in the day — coffee + something sweet + conversation + presence. Swedes fika twice a day. It's how deals get made and friendships deepen.</span>
+      </div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>What to order:</strong> Kanelbulle (cinnamon bun), kardamummabulle (cardamom bun), or kladdkaka (gooey chocolate cake). Always coffee or tea.</div></li>
+        <li><span class="dot"></span><div><strong>Where:</strong> Drop St:Pauls Bageri in Södermalm (multiple locations). Fabrique (citywide chain). Any neighborhood café on a side street.</div></li>
+        <li><span class="dot"></span><div><strong>How long:</strong> At least 20 minutes. Fika is not to-go. Sit. Talk. Exist.</div></li>
+      </ul>
+    </div>
+
+    <!-- NEIGHBORHOODS -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🗺</span>Stockholm's Islands — Where to Go</div>
+      <div class="hood">
+        <div class="hood-name">Gamla Stan (Old Town)</div>
+        <div class="hood-vibe" style="color:#006AA7">Historic · Royal · Photogenic</div>
+        <div class="hood-desc">Start here, go early morning. Cobblestone alleys, Royal Palace, Nobel Prize ceremony venue. Leave by 10am before crowds. Under Kastanjen for Swedish meatballs if you must eat here.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Södermalm ("Söder")</div>
+        <div class="hood-vibe" style="color:#006AA7">Trendy · Local · Nightlife</div>
+        <div class="hood-desc">Where Stockholm actually lives. Bars, design shops, vintage stores, the best café scene. SoFo area (south of Folkungagatan) = best for night out. Best views from Monteliusvägen.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Djurgården</div>
+        <div class="hood-vibe" style="color:#006AA7">Museums · Nature · Parks</div>
+        <div class="hood-desc">Royal national city park island. Vasa Museum, Skansen open-air museum, ABBA Museum. Walk or tram from Östermalm. Rosendal Garden Party held here in June.</div>
+      </div>
+      <div class="hood">
+        <div class="hood-name">Östermalm</div>
+        <div class="hood-vibe" style="color:#006AA7">Upscale · Food Market · Design</div>
+        <div class="hood-desc">Saluhallen indoor market: one of Europe's most beautiful food halls — smoked fish, crayfish, Swedish cheese. Even if you don't buy, walk through.</div>
+      </div>
+    </div>
+
+    <!-- MUST SEE -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">📍</span>Don't Miss — Stockholm Experiences</div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Vasa Museum</strong> — A fully intact 17th-century warship raised from the seabed after 333 years. The most visited museum in Scandinavia. Profoundly mind-blowing. Non-negotiable.</div></li>
+        <li><span class="dot"></span><div><strong>Gamla Stan at sunrise / early morning</strong> — Before the crowds arrive, it's one of the most beautiful places in Europe. Stay somewhere walkable.</div></li>
+        <li><span class="dot"></span><div><strong>Monteliusvägen walk</strong> — Free cliff-edge promenade in Södermalm with panoramic views of Gamla Stan, City Hall, and the water. Best at golden hour (which in May = 9–10pm).</div></li>
+        <li><span class="dot"></span><div><strong>Skansen Open-Air Museum</strong> — World's oldest. Traditional Swedish houses, crafts, Nordic wildlife (wolves, elk). Pairs well with Vasa on the same day.</div></li>
+        <li><span class="dot"></span><div><strong>The Metro as Art</strong> — Stockholm's T-bana is the world's longest art gallery. Take the blue line (T10/T11) — Kungsträdgården, Solna Centrum, and Rådhuset stations are stunning.</div></li>
+        <li><span class="dot"></span><div><strong>Archipelago</strong> — 30,000 islands start 20 minutes from the city center by ferry. A half-day trip to Vaxholm or Fjäderholmarna = unforgettable May experience.</div></li>
+      </ul>
+    </div>
+
+    <!-- FOOD -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🍽</span>Swedish Food — What to Eat</div>
+      <div class="food-item">
+        <div class="food-name">Swedish Meatballs (Köttbullar)</div>
+        <div class="food-desc">With lingonberry jam, mashed potato, and brown gravy. This is the real thing. Not IKEA. Try Under Kastanjen in Gamla Stan, or Operakällaren for an occasion.</div>
+        <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Must Try</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Smörgåsbord / Herring Spread</div>
+        <div class="food-desc">The Östermalm Saluhall is the right place to spend $30 on a lunch that recalibrates your understanding of Swedish cuisine. Herring, crayfish, pickled vegetables.</div>
+        <span class="food-tag" style="background:#D1FAE5;color:#065F46">Essential</span>
+      </div>
+      <div class="food-item">
+        <div class="food-name">New Nordic Cuisine</div>
+        <div class="food-desc">Ekstedt (Michelin, wood-fired everything), Freyja (rooftop + classic Swedish), Misshumasshu (Japanese-Swedish fusion, very hot right now). Stockholm's food scene punches well above its weight.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-name">Kanelbulle</div>
+        <div class="food-desc">Swedish cinnamon bun — larger, flatter, and more cardamom-forward than Finnish version. Mandatory daily ritual. St:Pauls Bageri makes the best in the city.</div>
+      </div>
+    </div>
+
+    <!-- NIGHTLIFE -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🌙</span>Nightlife — Stockholm After Dark</div>
+      <div class="alert alert-yellow" style="margin-bottom:14px">
+        <span class="alert-icon">⚠️</span>
+        <span>Stockholm clubs take door policy seriously. Dress with "understated quality" — clean sneakers are fine in Södermalm, smarter in Östermalm. Doormen are the last people you want to antagonize. Present yourself well and be patient in queues.</span>
+      </div>
+      <ul class="item-list">
+        <li><span class="dot"></span><div><strong>Södermalm bars & clubs</strong> — The most interesting scene. Independent spots around Mariatorget and SoFo, vinyl-heavy and low-pretension. Bar Ninja is a standout for the atmosphere alone.</div></li>
+        <li><span class="dot"></span><div><strong>Stureplan (Östermalm)</strong> — Upscale clubs, Sturecompagniet among them. Face-control queues, but genuinely well-designed spaces. Dress up more here.</div></li>
+        <li><span class="dot"></span><div><strong>Trädgården</strong> — Outdoor club under Skanstullsbron bridge, open in summer. One of Stockholm's most beloved experiences. May is the start of season — check what's on.</div></li>
+        <li><span class="dot"></span><div><strong>TAK Bar & Terrace</strong> — Rooftop bar near the hotel with Nordic-Japanese cocktails. Great first-evening spot to get your bearings over the city skyline before heading out.</div></li>
+      </ul>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">📅</span>What's On — Stockholm, May 19–22, 2026</div>
+      <div class="alert alert-blue" style="margin-bottom:14px">
+        <span class="alert-icon">🌅</span>
+        <span><strong>You arrive by overnight ferry from Helsinki.</strong> The ship docks at Stockholm Värtahamnen (~9–10am May 19). The Stockholm archipelago approach at sunrise is one of the great arrival experiences in Europe. First morning: get to the hotel, drop bags, walk Gamla Stan before the crowds hit.</span>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 19–22</div>
+        <div>
+          <div class="event-name">Djurgården Football Home Games — 3Arena</div>
+          <div class="event-desc">Allsvenskan (Swedish top-flight football) matches throughout your stay. Attending a Swedish football match is a genuinely local experience — passionate fans, affordable tickets, easy to reach by tram 7 from the hotel.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May onwards</div>
+        <div>
+          <div class="event-name">Gröna Lund Concert Series — Djurgården</div>
+          <div class="event-desc">Stockholm's iconic amusement park opens its summer concert season in May. Intimate outdoor waterfront venue on Djurgården, right next to the Vasa Museum. Check schedule — often excellent mid-tier artists, great atmosphere.</div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-dates">May 29–31</div>
+        <div>
+          <div class="event-name">Elitloppet — World Trotting Championship, Solvalla</div>
+          <div class="event-desc">Just after your stay — but worth noting if anyone extends. The world's most prestigious trotting race, a distinctly Swedish institution. The festive atmosphere at Solvalla is unlike anything else.</div>
+        </div>
+      </div>
+      <div class="alert alert-blue">
+        <span class="alert-icon">💡</span>
+        <span><strong>Coming just after your visit:</strong> Rosendal Garden Party (June 12–14) on Djurgården features Kraftwerk, Róisín Murphy, and Gesaffelstein — one of Europe's best boutique festival experiences. If any students are extending their trip, this is worth knowing about.</span>
+      </div>
+    </div>
+
+    <!-- HOTEL STOCKHOLM -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🏨</span>Your Base — Scandic Grand Central, Vasagatan/Kungsgatan corner</div>
+      <div class="alert alert-green" style="margin-bottom:16px">
+        <span class="alert-icon">📍</span>
+        <span>You're in <strong>Norrmalm — the absolute center of Stockholm.</strong> Stockholm Central Station is 150m away. T-Centralen metro (all lines) is also right there. Oscar Theater is directly across the street. Drottninggatan shopping street is a 3-minute walk. Gamla Stan is a 15-minute walk south. This is the best transit hub in the city.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div class="food-item">
+            <div class="food-name">☕ Vete-Katten <span style="font-weight:400;font-size:12px;color:#6B7280">— 5 min walk, Kungsgatan 55</span></div>
+            <div class="food-desc">Stockholm's most legendary café and konditori, founded 1928. The definitive fika experience. Cinnamon buns, princess cake, cardamom knots. A living piece of Swedish culture. Go for morning coffee.</div>
+            <span class="food-tag" style="background:#D1FAE5;color:#065F46">Iconic — Don't Miss</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🍽 Rolfs Kök <span style="font-weight:400;font-size:12px;color:#6B7280">— 10 min walk, Tegnérgatan 41</span></div>
+            <div class="food-desc">Michelin-listed Stockholm classic. Modern Swedish bistro, always full at lunch and dinner. Creative menu, unpretentious atmosphere. Reserve ahead for dinner. Excellent value for the quality.</div>
+            <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Local Institution</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🐟 Kajsas Fisk <span style="font-weight:400;font-size:12px;color:#6B7280">— 8 min walk, Hötorgshallen market</span></div>
+            <div class="food-desc">Beloved fish soup and seafood spot inside the Hötorgshallen food hall under Hötorget square. Cheap, excellent, genuinely local. The fish soup is legendary. Cash or card.</div>
+            <span class="food-tag" style="background:#D1FAE5;color:#065F46">Best Value Lunch</span>
+          </div>
+        </div>
+        <div>
+          <div class="food-item">
+            <div class="food-name">🏛 Hötorget Market + Hötorgshallen <span style="font-weight:400;font-size:12px;color:#6B7280">— 8 min walk</span></div>
+            <div class="food-desc">Outdoor produce market daily at Hötorget square (Sunday = flea market). Underground food hall with diverse cheap eats. K25 food court on Kungsgatan for upscale fast casual lunch. Great morning/lunch circuit.</div>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🍸 TAK Bar & Terrace <span style="font-weight:400;font-size:12px;color:#6B7280">— 10 min walk, Brunkebergstorg</span></div>
+            <div class="food-desc">Rooftop bar with Nordic-Japanese cocktails and one of Stockholm's best outdoor terraces. Perfect first-evening drink spot. Stunning city views in the long May evening light.</div>
+            <span class="food-tag" style="background:#DBEAFE;color:#1E40AF">Evening Opening</span>
+          </div>
+          <div class="food-item">
+            <div class="food-name">🏰 Gamla Stan <span style="font-weight:400;font-size:12px;color:#6B7280">— 15 min walk south</span></div>
+            <div class="food-desc">Walk south on Drottninggatan → cross Riksbron bridge → you're in Old Town. Go at 7am before anyone else arrives. Return via Södermalm across the Slussen bridge for evening bars.</div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-yellow" style="margin-top:12px">
+        <span class="alert-icon">🛍</span>
+        <span><strong>Your hotel's front door is basically on Drottninggatan</strong> — Stockholm's main pedestrian shopping street. NK department store, Åhléns, Mood mall, and dozens of independent Swedish design shops are all within a 5-minute walk. Dangerous for budgets.</span>
+      </div>
+    </div>
+
+    <!-- TRANSPORT -->
+    <div class="card span-2">
+      <div class="card-title"><span class="card-title-icon">🚌</span>Getting Around Stockholm</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <div>
+          <div class="transport-item">
+            <span class="transport-icon">🚇</span>
+            <div><div class="transport-label">T-bana (Metro)</div><div class="transport-desc">3 lines, color-coded. Buy an SL day card (~$12). Art stations on the blue line are a destination in themselves.</div></div>
+          </div>
+          <div class="transport-item">
+            <span class="transport-icon">🚋</span>
+            <div><div class="transport-label">Trams</div><div class="transport-desc">Tram 7 runs from central Stockholm to Djurgården (museums). Same SL card. Perfect tourist route.</div></div>
+          </div>
+          <div class="transport-item">
+            <span class="transport-icon">⛴️</span>
+            <div><div class="transport-label">Ferries</div><div class="transport-desc">Djurgården ferry from Slussen or Nybroplan. Archipelago ferries from Strömkajen. Magical way to arrive at Vasa Museum.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="transport-item">
+            <span class="transport-icon">🚲</span>
+            <div><div class="transport-label">City Bikes (Stadsbikelar)</div><div class="transport-desc">Available April–October. App-based. Stockholm is bike-friendly with dedicated lanes throughout.</div></div>
+          </div>
+          <div class="transport-item">
+            <span class="transport-icon">🚶</span>
+            <div><div class="transport-label">Walking</div><div class="transport-desc">Gamla Stan → Södermalm: 10 minutes across Slussen bridge. Djurgården from Östermalm: 15 min walk. Very walkable city.</div></div>
+          </div>
+          <div class="transport-item">
+            <span class="transport-icon">✈️</span>
+            <div><div class="transport-label">Arlanda Airport</div><div class="transport-desc">Arlanda Express train to city center: 20 min, ~$30. Cheaper: commuter train (pendeltåg) from Sky City, ~$15.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     CROSS-CITY COMPARISON + PACKING
+═══════════════════════════════════════════════ -->
+
+<!-- JET LAG SECTION -->
+<div style="max-width:900px;margin:0 auto;padding:32px 24px 0">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#6B7280;padding-bottom:14px;border-bottom:2px solid #111827;margin-bottom:24px;">
+    Beating Jet Lag — A Complete Protocol
+  </div>
+</div>
+
+<div style="max-width:900px;margin:0 auto;padding:0 24px 16px">
+  <div style="background:white;border-radius:16px;border:1px solid #E5E7EB;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.06)">
+
+    <div class="alert alert-blue" style="margin-bottom:22px">
+      <span class="alert-icon">🌍</span>
+      <span>Chapel Hill to Helsinki is <strong>+7 hours</strong>. That means when you land in Helsinki feeling like 3am, locals are having morning coffee. Your body will be confused for 3–5 days. This protocol — started <em>before</em> you leave North Carolina — cuts that dramatically. Follow it seriously and you'll be functional from day one.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:22px">
+
+      <!-- PHASE 1 -->
+      <div style="border-radius:12px;border:2px solid #0057A8;overflow:hidden">
+        <div style="background:#0057A8;padding:12px 16px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7)">Phase 1</div>
+          <div style="font-size:15px;font-weight:700;color:white;margin-top:2px">Before You Leave NC</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6)">3–5 days before departure</div>
+        </div>
+        <div style="padding:14px 16px">
+          <ul style="list-style:none;font-size:13px;line-height:1.8">
+            <li>⏰ <strong>Shift your sleep schedule early.</strong> Start going to bed 1 hour earlier each night. By departure day, aim for a bedtime of 9–10pm ET — this maps to 4–5am Helsinki time and naturally pre-adjusts your clock.</li>
+            <li>🌅 <strong>Get morning sunlight.</strong> Go outside within 30 minutes of waking. Bright morning light is the most powerful circadian signal your body has. Even 10 minutes helps.</li>
+            <li>☕ <strong>Cut evening caffeine earlier.</strong> Shift your last coffee to noon or earlier in the days before the flight. This makes your pre-shifted early bedtime achievable.</li>
+            <li>💧 <strong>Hydrate aggressively.</strong> Start drinking more water 2–3 days before. Flying while well-hydrated dramatically reduces fatigue severity.</li>
+            <li>🏃 <strong>Exercise in the morning.</strong> Morning exercise anchors your circadian rhythm to daytime. Avoid hard workouts in the evenings before departure.</li>
+            <li>🍽 <strong>Eat light in the 24 hours before.</strong> Heavy meals disrupt sleep quality. Keep pre-flight eating simple and nutritious.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div style="border-radius:12px;border:2px solid #374151;overflow:hidden">
+        <div style="background:#374151;padding:12px 16px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7)">Phase 2</div>
+          <div style="font-size:15px;font-weight:700;color:white;margin-top:2px">On the Flight</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6)">The transatlantic leg</div>
+        </div>
+        <div style="padding:14px 16px">
+          <ul style="list-style:none;font-size:13px;line-height:1.8">
+            <li>🕐 <strong>Reset your watch to Helsinki time immediately.</strong> Mental anchoring matters. Think in Finnish time from the moment you board.</li>
+            <li>😴 <strong>Sleep on the plane — on Helsinki's schedule.</strong> If it's nighttime in Helsinki, try to sleep even if you're not tired yet. Use an eye mask, neck pillow, and earplugs. This is non-negotiable.</li>
+            <li>💡 <strong>Avoid screens before your sleep window.</strong> Blue light suppresses melatonin. Use airplane mode and read or listen to something calm instead.</li>
+            <li>💧 <strong>Drink water constantly.</strong> Cabin air is intensely dehydrating. Avoid caffeine during your Helsinki "night window." Drink a full glass every hour you're awake.</li>
+            <li>🚶 <strong>Move when awake.</strong> Walk the aisle, do seated stretches. Circulation keeps you sharper when you land.</li>
+            <li>🍽 <strong>Skip the plane meal if it's the wrong time.</strong> Eating syncs your gut clock. If your Helsinki-time target is sleep, don't eat a big meal — save it for Helsinki breakfast.</li>
+            <li>💊 <strong>Melatonin (0.5–1mg).</strong> Take a low dose 30 minutes before your Helsinki nighttime window on the plane. Low dose works better than high dose for circadian shifting — if you use it.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div style="border-radius:12px;border:2px solid #065F46;overflow:hidden">
+        <div style="background:#065F46;padding:12px 16px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7)">Phase 3</div>
+          <div style="font-size:15px;font-weight:700;color:white;margin-top:2px">First Days in Helsinki</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6)">May 12–14 — the critical window</div>
+        </div>
+        <div style="padding:14px 16px">
+          <ul style="list-style:none;font-size:13px;line-height:1.8">
+            <li>🌞 <strong>Get outside immediately.</strong> Natural light on arrival day is your single most powerful tool. Go for a walk outside as soon as you drop your bags — even for 20 minutes. Don't hide indoors.</li>
+            <li>🚫 <strong>Do not nap on arrival day.</strong> This is the hardest rule and the most important. If you sleep during Helsinki daytime on day one, you reset nothing. Push through to 9–10pm local time.</li>
+            <li>🏃 <strong>Light exercise in the morning.</strong> A 20-minute walk along the Helsinki waterfront at 8am does more for your adaptation than any supplement. Do it every day.</li>
+            <li>☕ <strong>Strategic caffeine.</strong> Use coffee in the morning only — before noon. Finland's coffee culture makes this easy and delightful. Avoid afternoon caffeine entirely for the first 2–3 days.</li>
+            <li>🍽 <strong>Eat on local meal schedule.</strong> Your gut clock is a powerful circadian anchor. Eat breakfast when Helsinki eats breakfast, lunch at lunchtime, dinner at dinnertime — even if you're not hungry yet.</li>
+            <li>😴 <strong>Target 10–10:30pm bedtime.</strong> The long daylight is your enemy here — it will feel like 7pm even at 10:30pm. Use your eye mask. Blackout curtains, if available. Set an alarm for 7am.</li>
+            <li>🌅 <strong>The light trick:</strong> The Finnish sky at 10pm will still be bright. This is the biggest adaptation challenge. Keep your eye mask accessible at all times — hotel, restaurant, anywhere. Treat the light like it's irrelevant to time.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK REFERENCE -->
+    <div style="background:#F9FAFB;border-radius:12px;padding:18px 20px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#374151;margin-bottom:12px">⚡ Quick Reference — The Non-Negotiable Five</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">1️⃣</div>
+          <div><strong>Shift sleep 1 hour earlier per night for 3+ days before leaving NC.</strong> The most impactful thing you can do before you even pack.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">2️⃣</div>
+          <div><strong>Sleep on the plane during Helsinki nighttime hours.</strong> Use an eye mask. This is when the adaptation happens — or doesn't.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">3️⃣</div>
+          <div><strong>Go outside in natural light immediately upon arrival.</strong> Even 15 minutes of Finnish morning sun is a powerful circadian signal.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">4️⃣</div>
+          <div><strong>Do not nap on arrival day.</strong> Push through to 9–10pm Helsinki time. One miserable afternoon = much better next 9 days.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">5️⃣</div>
+          <div><strong>Bring an eye mask and use it every night.</strong> In mid-May, Helsinki never gets fully dark. Without an eye mask, 3am looks like dusk — and you'll wake up at 4am feeling like it's noon.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">⚠️</div>
+          <div><strong>Watch for the 3pm wall.</strong> Days 1–2, you'll likely hit a fatigue spike around 3–4pm local time (8–9am your body time). Plan something active or engaging for that window — a walk, not a rest.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="alert alert-green">
+        <span class="alert-icon">🧘</span>
+        <span><strong>The holistic frame:</strong> Jet lag isn't just sleep — it's your temperature rhythm, hunger cycle, alertness peaks, and digestion all being 7 hours out of sync simultaneously. The protocol above addresses all of them. Treat arrival like an athletic performance: prepare, execute a plan, and don't make it worse by fighting the wrong battles.</span>
+      </div>
+      <div class="alert alert-yellow">
+        <span class="alert-icon">📦</span>
+        <span><strong>Pack specifically for jet lag:</strong> eye mask (essential — not optional), earplugs, melatonin 0.5–1mg tablets, a reusable water bottle for the flight, and a neck pillow. Do not rely on the airline for any of these. Buy them before you leave Chapel Hill.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BUDGET SECTION -->
+<div style="max-width:900px;margin:0 auto;padding:32px 24px 0">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#6B7280;padding-bottom:14px;border-bottom:2px solid #111827;margin-bottom:24px;">
+    Thriving on a Limited Budget
+  </div>
+</div>
+
+<div style="max-width:900px;margin:0 auto;padding:0 24px 16px">
+  <div style="background:white;border-radius:16px;border:1px solid #E5E7EB;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.06)">
+
+    <div class="alert alert-yellow" style="margin-bottom:22px">
+      <span class="alert-icon">💡</span>
+      <span>With <strong>breakfasts covered at the hotel</strong>, public transport tickets provided, and <strong>some dinners included</strong>, your out-of-pocket spend is largely lunch, snacks, coffees, activities, and personal spending. The hacks below are about <strong>stretching your remaining euros as far as possible</strong> — and getting the most authentic experience while you're at it.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:22px">
+
+      <!-- FINLAND -->
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0057A8;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #0057A8">🇫🇮 Helsinki Hacks</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.75">
+          <li>🍽 <strong>Lounas (lunch special)</strong> — every restaurant serves a set lunch Mon–Fri for €12–16 including soup, bread, salad, and main. Best value meal in the Nordics. <em>Never pay full dinner prices at lunch.</em></li>
+          <li>🥐 <strong>Karelian pies</strong> at any K-Market or S-Market supermarket — ~€1.50 each. Authentic, filling, perfect breakfast on the go.</li>
+          <li>🛒 <strong>S-Market & K-Market</strong> — Finland's two main supermarket chains, everywhere in central Helsinki. Great for breakfast supplies, snacks, sandwiches, yoghurt, Finnish cheese, and rye bread at fraction of café prices. Many open until 10pm.</li>
+          <li>🚋 <strong>HSL day ticket</strong> ~€10 covers all trams, buses, metro, AND the Suomenlinna ferry. Single best purchase of the day.</li>
+          <li>🏛 <strong>Free museums:</strong> National Museum of Finland (free Fri 4–6pm), Oodi Library (always free), Kamppi Chapel (free), Senate Square (free).</li>
+          <li>🌊 <strong>Suomenlinna</strong> — ferry covered by HSL day ticket. The island itself is free to explore.</li>
+          <li>🛒 <strong>Hakaniemi Market Hall</strong> — covered local market, cheap lunch, zero tourists. Far better than tourist-facing Esplanade cafés.</li>
+        </ul>
+      </div>
+
+      <!-- ESTONIA -->
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0072CE;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #0072CE">🇪🇪 Tallinn Hacks (Day Trip)</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.75">
+          <li>💶 <strong>Tallinn is already cheap</strong> — ~30% less than Helsinki across the board. But Old Town restaurants are tourist-priced. Eat at Telliskivi instead.</li>
+          <li>🍽 <strong>F-Hoone in Telliskivi</strong> — full meal under €15. Far better value than any Old Town restaurant with a medieval theme.</li>
+          <li>🧺 <strong>Balti Jaama Turg market</strong> — fresh food, cheese, pickles, street food. Graze here for lunch for €8–10.</li>
+          <li>🚋 <strong>Trams 1, 2, 5</strong> from Balti Jaam to Telliskivi — ~€1.50 with the app, or tap card. Don't take taxis within the city centre — it's walkable.</li>
+          <li>🏰 <strong>Old Town is free to wander</strong> — streets, walls, views, and squares cost nothing. Only St. Olaf tower (€5) and some museums charge.</li>
+          <li>🛒 <strong>Rimi supermarkets</strong> — Estonia's main chain. Cheap, good prepared foods and Estonian snacks. Perfect for ferry-day provisions.</li>
+          <li>📸 <strong>Fotografiska</strong> — ~€15 entry but includes one of Europe's best rotating photography exhibitions. Worth every cent.</li>
+        </ul>
+      </div>
+
+      <!-- SWEDEN -->
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#006AA7;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #FECC02">🇸🇪 Stockholm Hacks</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.75">
+          <li>🏛 <strong>Free world-class museums:</strong> Moderna Museet (modern art, free), Historiska Museet (free), Nationalmuseum (free). Stockholm has more free museums than almost any European capital.</li>
+          <li>🐟 <strong>Kajsas Fisk at Hötorgshallen</strong> — legendary fish soup for ~€12, 8 min walk from your hotel. One of Stockholm's best lunches at fraction of restaurant prices.</li>
+          <li>🛒 <strong>ICA & Hemköp supermarkets</strong> — Sweden's main chains, multiple near the hotel on Vasagatan. Excellent prepared foods, Swedish crispbreads, dairy, and berries. Great for a self-catered breakfast or picnic in Kungsträdgården.</li>
+          <li>🎫 <strong>SL day/72hr transit card</strong> covers metro, trams, buses, and Djurgården ferries. Buy for 3 days — it pays off by day one.</li>
+          <li>🏰 <strong>Gamla Stan is free</strong> — most beautiful medieval streets in Scandinavia, zero cost to walk.</li>
+          <li>🌄 <strong>Monteliusvägen</strong> — free cliff walk in Södermalm with panoramic views. Best free experience in Stockholm.</li>
+          <li>🚇 <strong>The metro as art gallery</strong> — ride the blue line. Free with transit card. Genuinely stunning stations.</li>
+          <li>🌿 <strong>Djurgården island</strong> — Skansen grounds partly free, beautiful park walks free. Vasa Museum ($20) is non-negotiable.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DAILY BUDGET TRACKER -->
+    <div style="background:#F9FAFB;border-radius:12px;padding:20px;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#374151;margin-bottom:6px">Sample Out-of-Pocket Day (Breakfasts + Transit Covered)</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:14px">Estimated remaining spend per person when dinners are on your own</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px">
+        <div>
+          <div style="font-weight:600;color:#0057A8;margin-bottom:8px">🇫🇮 Helsinki</div>
+          <div style="line-height:1.8">
+            <span style="color:#9CA3AF;font-size:11px">COVERED: Breakfast + transit</span><br>
+            K-Market coffee + snack: <strong>$4</strong><br>
+            Lounas lunch: <strong>$15</strong><br>
+            Suomenlinna island: <strong>$0</strong><br>
+            S-Market afternoon snack: <strong>$5</strong><br>
+            Dinner (own cost): <strong>$25–35</strong><br>
+            <span style="border-top:1px solid #E5E7EB;display:block;margin-top:6px;padding-top:6px;font-weight:700">Total: ~$49–59</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#0072CE;margin-bottom:8px">🇪🇪 Tallinn (day trip)</div>
+          <div style="line-height:1.8">
+            <span style="color:#9CA3AF;font-size:11px">COVERED: Breakfast + transit to port</span><br>
+            Ferry ticket (if applicable): <strong>TBC</strong><br>
+            Old Town wander: <strong>$0</strong><br>
+            Balti Jaama market lunch: <strong>$10</strong><br>
+            Tram Balti Jaam→Telliskivi: <strong>$2</strong><br>
+            Fotografiska: <strong>$16</strong><br>
+            F-Hoone dinner: <strong>$18</strong><br>
+            <span style="border-top:1px solid #E5E7EB;display:block;margin-top:6px;padding-top:6px;font-weight:700">Own spend: ~$46+</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#006AA7;margin-bottom:8px">🇸🇪 Stockholm</div>
+          <div style="line-height:1.8">
+            <span style="color:#9CA3AF;font-size:11px">COVERED: Breakfast + transit</span><br>
+            Vete-Katten fika: <strong>$10</strong><br>
+            Kajsas Fisk lunch: <strong>$13</strong><br>
+            Moderna Museet: <strong>$0</strong><br>
+            ICA afternoon snack: <strong>$5</strong><br>
+            Dinner (own cost): <strong>$28–40</strong><br>
+            <span style="border-top:1px solid #E5E7EB;display:block;margin-top:6px;padding-top:6px;font-weight:700">Total: ~$56–68</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="alert alert-blue">
+        <span class="alert-icon">🧠</span>
+        <span><strong>The golden rule:</strong> With breakfasts and transit covered, your main variable costs are lunch and snacks. Use lounas/dagsmeny set menus at midday, S-Market and K-Market for snacks, and save your free budget for one or two experience splurges (sauna, Fotografiska, Vasa Museum) rather than spreading it thin across many mediocre meals.</span>
+      </div>
+      <div class="alert alert-green">
+        <span class="alert-icon">💳</span>
+        <span><strong>Card discipline:</strong> Get a Revolut or Wise card with zero FX fees before you leave. Every time you pay with a US bank card and accept "convert to USD," you're paying 3–5% extra. On a 10-day trip that's $30–60 lost for no reason.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CROSS-CITY COMPARISON -->
+<div style="max-width:900px;margin:24px auto 0;padding:0 24px">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#6B7280;padding-bottom:14px;border-bottom:2px solid #111827;margin-bottom:24px;">
+    Cross-City Comparison
+  </div>
+</div>
+<div style="max-width:900px;margin:0 auto;padding:0 24px 16px">
+  <div style="background:white;border-radius:16px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06)">
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;background:#111827;color:white">
+      <div style="padding:16px 20px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5)">Category</div>
+      <div style="padding:16px 12px;text-align:center">
+        <div style="font-size:20px">🇫🇮</div>
+        <div style="font-size:13px;font-weight:700;color:#60A5FA">Helsinki</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4)">May 12–16</div>
+      </div>
+      <div style="padding:16px 12px;text-align:center">
+        <div style="font-size:20px">🇪🇪</div>
+        <div style="font-size:13px;font-weight:700;color:#38BDF8">Tallinn</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4)">May 17 (day)</div>
+      </div>
+      <div style="padding:16px 12px;text-align:center">
+        <div style="font-size:20px">🇸🇪</div>
+        <div style="font-size:13px;font-weight:700;color:#FCD34D">Stockholm</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4)">May 19–22</div>
+      </div>
+    </div>
+    
+    <!-- rows -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Currency</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Euro €</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Euro €</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">SEK kr<br><span style="font-size:11px;color:#9CA3AF">~10.5 kr = $1</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Overall cost</div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-yellow" style="font-size:12px">€€€ Pricey</span></div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-green" style="font-size:12px">€€ Value</span></div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-red" style="font-size:12px">€€€€ Most $$$</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Beer at a bar</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$8–12</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$5–8</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$10–14</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Casual dinner</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$25–40</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$18–30</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$35–55</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Coffee</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$4–6</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$3–5</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">$5–8 (with fika)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Tipping</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Not expected</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">5–10% welcome</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Not expected</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Cash needed?</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Rarely</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Rarely</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Almost never</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Best supermarket</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">S-Market / K-Market</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Rimi</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">ICA / Hemköp</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Best value meal</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Lounas lunch ~€14</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Balti Jaama market ~€10</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Kajsas Fisk soup ~€12</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Social vibe</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Reserved, warm inside</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Pragmatic, direct</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Calm, stylish reserve</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Language risk</div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-green" style="font-size:12px">Zero — English perfect</span></div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-green" style="font-size:12px">Zero — English fine</span></div>
+      <div style="padding:14px 12px;text-align:center"><span class="badge badge-green" style="font-size:12px">Zero — English perfect</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Signature food</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Karelian pie, salmon soup, reindeer</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Black rye bread, smoked fish, vorschmack</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Meatballs, herring, kanelbulle</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Iconic ritual</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Sauna + Baltic plunge</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Old Town wandering at dawn</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Fika — twice daily</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Best word to learn</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px"><em>kiitos</em> (thanks)</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px"><em>aitäh</em> (thanks)</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px"><em>tack</em> (thanks)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid #F3F4F6;background:#FAFAFA">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Don't miss</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Suomenlinna + Löyly sauna</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Telliskivi + Toompea Hill</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">Vasa Museum + Södermalm</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr">
+      <div style="padding:14px 20px;font-size:13px;font-weight:600;color:#374151">Biggest surprise</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">It's still light at 11pm</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">How cheap & how cool</div>
+      <div style="padding:14px 12px;text-align:center;font-size:13px">The metro is an art museum</div>
+    </div>
+  </div>
+</div>
+
+<!-- PACKING GUIDE -->
+<div style="max-width:900px;margin:24px auto 0;padding:0 24px">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#6B7280;padding-bottom:14px;border-bottom:2px solid #111827;margin-bottom:24px;">
+    What to Pack — May in the Nordics
+  </div>
+  <div style="background:white;border-radius:16px;border:1px solid #E5E7EB;padding:28px;margin-bottom:24px">
+    <div class="alert alert-yellow" style="margin-bottom:20px">
+      <span class="alert-icon">🌦</span>
+      <span><strong>May in the Nordics is beautiful but unpredictable.</strong> You may get 20°C sunny days and you may get 8°C windy rain — sometimes in the same afternoon. The cardinal rule: layers. Do not pack for one weather scenario. Pack for three.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0057A8;margin-bottom:12px">👕 Clothing</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.7">
+          <li>✓ <strong>Waterproof jacket</strong> — non-negotiable. Light packable is ideal</li>
+          <li>✓ <strong>Layers</strong> — thin fleece or merino midlayer</li>
+          <li>✓ <strong>One warm sweater</strong> — evenings get cold, especially on the water</li>
+          <li>✓ <strong>Waterproof walking/trail shoes</strong> — cobblestones AND Nuuksio trails both demand these</li>
+          <li>✓ <strong>One "going out" outfit</strong> — clean sneakers + smart casual for Stockholm clubs</li>
+          <li>✓ Comfortable trousers — jeans are fine everywhere</li>
+          <li>✓ Light scarf — useful on ferries and windy waterfront areas</li>
+          <li>✓ <strong>Quick-dry towel</strong> — for saunas; hotel towels shouldn't go to the sauna</li>
+          <li>✗ Heavy winter coat — not needed in May</li>
+          <li>✗ Umbrella — wind makes them useless. Jacket hood is better</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0072CE;margin-bottom:12px">🎒 Essentials</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.7">
+          <li>✓ <strong>Contactless card</strong> — your most important item. Visa/Mastercard, tap-enabled</li>
+          <li>✓ <strong>Eye mask</strong> — it never gets fully dark in May. Non-negotiable</li>
+          <li>✓ <strong>Light daypack (20–25L)</strong> — carry daily essentials without a heavy bag. Nuuksio, Suomenlinna, Tallinn day trip — this is your best friend. Bring one from home.</li>
+          <li>✓ <strong>EU plug adapter</strong> — Type C/F (same as most of Europe)</li>
+          <li>✓ Power bank — long days = heavy phone use</li>
+          <li>✓ Reusable water bottle — tap water is world-class everywhere</li>
+          <li>✓ Passport (not just driver's license — needed for club entry and ferry ID check)</li>
+          <li>✓ Travel insurance info</li>
+          <li>✗ Cash — genuinely not needed in any of these cities</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#006AA7;margin-bottom:12px">📱 Apps to Download</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.7">
+          <li>✓ <strong>HSL</strong> — Helsinki transit tickets (bus, tram, metro, ferry)</li>
+          <li>✓ <strong>SL</strong> — Stockholm transit (metro, tram, bus, ferry)</li>
+          <li>✓ <strong>Wolt</strong> — Food delivery in all 3 cities</li>
+          <li>✓ <strong>Bolt</strong> — Rideshare, cheaper than Uber in Tallinn especially</li>
+          <li>✓ <strong>Google Maps</strong> — works excellently throughout</li>
+          <li>✓ <strong>Google Translate</strong> — camera translate for menus in Finnish/Estonian</li>
+          <li>✓ <strong>Revolut</strong> or similar — no-fee card for spending in SEK</li>
+          <li>✓ <strong>Tripadvisor / TheFork</strong> — for restaurant reservations</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <div class="alert alert-blue">
+        <span class="alert-icon">🌞</span>
+        <span><strong>The Light Phenomenon:</strong> By mid-May, Helsinki gets 18+ hours of daylight and Stockholm 18–19 hours. It will feel wrong — your brain will be saying it's 3pm when it's actually 10pm. Bring an eye mask and melatonin if you're a sensitive sleeper. This is the most underestimated jet lag booster of the trip.</span>
+      </div>
+      <div class="alert alert-green">
+        <span class="alert-icon">💡</span>
+        <span><strong>Sauna essentials:</strong> Bring a small quick-dry towel. Most saunas provide one, but your own compact travel towel means you're never caught out. Flip-flops for the changing room. Leave jewelry in the hotel. Remove glasses before entering — they fog immediately and the heat isn't good for lenses.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOTEL LIFE SECTION -->
+<div style="max-width:900px;margin:24px auto 0;padding:0 24px">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#6B7280;padding-bottom:14px;border-bottom:2px solid #111827;margin-bottom:24px;">
+    Living Well on the Trip — Hotel Room & Travel Mindset
+  </div>
+  <div style="background:white;border-radius:16px;border:1px solid #E5E7EB;padding:28px;margin-bottom:24px;box-shadow:0 4px 24px rgba(0,0,0,0.06)">
+
+    <div class="alert alert-blue" style="margin-bottom:22px">
+      <span class="alert-icon">🏠</span>
+      <span><strong>Treat your hotel room like an apartment, not a storage unit.</strong> You're in Helsinki for 6 nights, on the ferry one night, then Stockholm for 3 nights. The students who thrive on group trips are the ones who feel settled — not perpetually displaced. It takes 15 minutes on arrival to set up your room properly and it changes everything about how you function for the rest of the stay.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#0057A8;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #0057A8">🏨 Setting Up Your Room (Day 1 — Do This First)</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.8">
+          <li>🧳 <strong>Unpack into the wardrobe.</strong> Hang clothes, put folded items in drawers. The suitcase goes under the bed or in the corner — empty. Living out of a suitcase for 6 nights means perpetually lost items, wrinkled clothes, and a low-grade feeling of chaos.</li>
+          <li>🔌 <strong>Claim your charging station.</strong> Plug in your adapter on the desk or nightstand. Create a consistent place for your phone, power bank, and earbuds every night. You will thank yourself at 7am.</li>
+          <li>👟 <strong>Shoe place.</strong> Put your shoes in the same spot every time — near the door. This sounds trivial. It eliminates an astonishing number of micro-stresses.</li>
+          <li>🎒 <strong>Daypack ready the night before.</strong> Each evening, pack your daypack for the next day: water bottle, transit card, this guide, jacket, power bank, snacks if needed. Walk out the door ready.</li>
+          <li>🌙 <strong>Eye mask on the pillow.</strong> Not in the bag — on the pillow. You will not remember to get it out of your bag at midnight when the room is still bright.</li>
+          <li>🗂 <strong>One place for documents.</strong> Passport, any printed itinerary, hotel card — in the same pocket of your bag always. Never "somewhere in your bag."</li>
+        </ul>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#006AA7;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #006AA7">🎒 The Daypack — Your Essential Travel Tool</div>
+        <ul style="list-style:none;font-size:13px;line-height:1.8">
+          <li>📦 <strong>Bring one from home.</strong> 20–25L is ideal — big enough for a jacket, water bottle, and snacks; small enough to carry all day without fatigue. A drawstring bag is too small. A hiking rucksack is too heavy.</li>
+          <li>🌲 <strong>Nuuksio day:</strong> Waterproof jacket, water bottle, snacks, trail snacks, power bank, sunscreen, this guide. Leave the big camera behind — your phone is enough.</li>
+          <li>⛴ <strong>Tallinn day trip:</strong> Pack light. The whole point is agility — you're doing a lot in one day. Just essentials: card, phone, jacket, water, snack.</li>
+          <li>🚢 <strong>Overnight ferry night:</strong> Pack an overnight bag from your main suitcase — just what you need for one night. Leave the big bag checked at the hotel or in the ferry storage. This is where having your room properly organized pays off.</li>
+          <li>🔄 <strong>Hotel to hotel transition (Helsinki → Stockholm):</strong> You have one night on the ferry. Keep your main suitcase packed and transfer-ready by the morning of May 18. Don't leave this to the last minute.</li>
+        </ul>
+
+        <div style="background:#F9FAFB;border-radius:10px;padding:14px;margin-top:12px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px">📅 Your Luggage Timeline</div>
+          <div style="font-size:12px;line-height:1.8;color:#6B7280">
+            <strong style="color:#374151">May 12–17:</strong> Fully unpacked in Helsinki. Room = apartment.<br>
+            <strong style="color:#374151">May 17 evening:</strong> Repack suitcase for ferry. Essentials only in daypack for Tallinn day.<br>
+            <strong style="color:#374151">May 18:</strong> Helsinki free day. Suitcase ready. Check out, board ferry evening.<br>
+            <strong style="color:#374151">May 19 morning:</strong> Arrive Stockholm. Unpack properly again. 3 nights = worth settling in.<br>
+            <strong style="color:#374151">May 22:</strong> Check out. Trip ends.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="alert alert-green">
+        <span class="alert-icon">🧠</span>
+        <span><strong>Mental health note:</strong> Group travel is intense. Your hotel room is your decompression chamber. Give yourself permission to have a quiet night in occasionally — it makes the social days better, not worse.</span>
+      </div>
+      <div class="alert alert-yellow">
+        <span class="alert-icon">💤</span>
+        <span><strong>Sleep discipline:</strong> The biggest mistake on group trips is accumulating sleep debt. The light, the excitement, the late nights — it compounds fast. Protect 7–8 hours. A tired student misses more than a rested one who went to bed at midnight instead of 2am.</span>
+      </div>
+      <div class="alert alert-blue">
+        <span class="alert-icon">📸</span>
+        <span><strong>Be present:</strong> The best memories of this trip won't be in your camera roll. They'll be the conversations at the Suomenlinna dinner, the moment Finland's score appears on a pub screen, the first view of Stockholm from the ferry. Put the phone down sometimes.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="primer-footer">
+  <strong>GIE 2026 · UNC Kenan-Flagler Business School</strong><br>
+  Finland–Estonia–Sweden Trip · May 12–22, 2026 · For first-time American visitors
+</div>
+
+<script>
+  function showCity(city) {
+    document.querySelectorAll('.city-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + city).classList.add('active');
+    document.querySelector('.city-btn.' + city).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.city-nav').offsetTop - 10, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
