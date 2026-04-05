@@ -417,6 +417,54 @@
   }
   .primer-footer strong { color: rgba(255,255,255,0.75); }
 
+
+  /* ── JUMP NAV ── */
+  .jump-nav {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 4px;
+  }
+  .jump-nav-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+  .jn-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--soft);
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .jn-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: #F9FAFB;
+    color: var(--mid);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .jn-btn:hover { background: var(--dark); color: white; border-color: var(--dark); }
+  .fi .jn-btn:hover { background: #0057A8; border-color: #0057A8; }
+  .ee .jn-btn:hover { background: #0072CE; border-color: #0072CE; }
+  .se .jn-btn:hover { background: #006AA7; border-color: #006AA7; }
+
   /* ── ANIMATIONS ── */
   .city-panel.active .city-hero-inner { animation: fadeUp 0.4s ease; }
   .city-panel.active .card { animation: fadeUp 0.4s ease both; }
@@ -480,10 +528,28 @@
     </div>
   </div>
 
+  <div class="jump-nav fi">
+    <div class="jump-nav-inner">
+      <div class="jn-label">Jump to section</div>
+      <a class="jn-btn" href="#fi-essentials">⚡ Essentials</a>
+      <a class="jn-btn" href="#fi-budget">💶 Budget</a>
+      <a class="jn-btn" href="#fi-culture">🧭 Culture</a>
+      <a class="jn-btn" href="#fi-sauna">🔥 Sauna</a>
+      <a class="jn-btn" href="#fi-neighborhoods">🗺 Neighborhoods</a>
+      <a class="jn-btn" href="#fi-food">🍽 Food</a>
+      <a class="jn-btn" href="#fi-mustsee">📍 Must-See</a>
+      <a class="jn-btn" href="#fi-transport">🚌 Transport</a>
+      <a class="jn-btn" href="#fi-events">📅 Your Week</a>
+      <a class="jn-btn" href="#fi-nuuksio">🌲 Nuuksio</a>
+      <a class="jn-btn" href="#fi-hotel">🏨 Your Hotel</a>
+      <a class="jn-btn" href="#fi-nightlife">🌙 Nightlife</a>
+    </div>
+  </div>
+
   <div class="content-grid fi">
 
     <!-- QUICK FACTS -->
-    <div class="card">
+    <div class="card" id="fi-essentials">
       <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
       <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Euro (€) — cards everywhere</span></div>
       <div class="fact-row"><span class="fact-label">Language</span><span class="fact-val">Finnish / English (excellent)</span></div>
@@ -494,7 +560,7 @@
     </div>
 
     <!-- BUDGET GUIDE -->
-    <div class="card">
+    <div class="card" id="fi-budget">
       <div class="card-title"><span class="card-title-icon">💶</span>Budget in USD (approx.)</div>
       <div class="fact-row"><span class="fact-label">Coffee / kahvi</span><span class="fact-val">$4–6</span></div>
       <div class="fact-row"><span class="fact-label">Lunch special (lounas)</span><span class="fact-val">$12–16 incl. bread+salad</span></div>
@@ -506,7 +572,7 @@
     </div>
 
     <!-- CULTURE & ETIQUETTE -->
-    <div class="card span-2">
+    <div class="card span-2" id="fi-culture">
       <div class="card-title"><span class="card-title-icon">🧭</span>Culture & Etiquette — What Americans Get Wrong</div>
       <div class="dos-donts">
         <div class="do-col">
@@ -537,7 +603,7 @@
     </div>
 
     <!-- SAUNA GUIDE -->
-    <div class="card span-2">
+    <div class="card span-2" id="fi-sauna">
       <div class="card-title"><span class="card-title-icon">🔥</span>The Sauna — Finland's Sacred Institution</div>
       <div class="alert alert-blue" style="margin-bottom:16px">
         <span class="alert-icon">💡</span>
@@ -576,7 +642,7 @@
     </div>
 
     <!-- NEIGHBORHOODS -->
-    <div class="card">
+    <div class="card" id="fi-neighborhoods">
       <div class="card-title"><span class="card-title-icon">🗺</span>Neighborhoods to Know</div>
       <div class="hood">
         <div class="hood-name">Design District / Punavuori</div>
@@ -601,7 +667,7 @@
     </div>
 
     <!-- FOOD & DRINK -->
-    <div class="card">
+    <div class="card" id="fi-food">
       <div class="card-title"><span class="card-title-icon">🍽</span>Eat & Drink — The Helsinki List</div>
       <div class="food-item">
         <div class="food-name">Karjalanpiirakka (Karelian Pie)</div>
@@ -628,7 +694,7 @@
     </div>
 
     <!-- MUST SEE -->
-    <div class="card">
+    <div class="card" id="fi-mustsee">
       <div class="card-title"><span class="card-title-icon">📍</span>Don't Miss — Helsinki Experiences</div>
       <ul class="item-list">
         <li><span class="dot"></span><div><strong>Suomenlinna Sea Fortress</strong> — Your group visits Wednesday evening (May 13) for your <strong>welcome dinner</strong> — a perfect introduction to Helsinki. UNESCO World Heritage Site built by Sweden in 1748 on six linked islands. You'll arrive by HSL ferry (15 min from Market Square). The island has lived under Swedish, Russian, and Finnish rule — walking its stone walls and gun batteries at 9pm in golden light is an experience you'll remember for years. <em>Go early on the ferry if free time allows before the group dinner.</em></div></li>
@@ -641,7 +707,7 @@
     </div>
 
     <!-- TRANSPORT -->
-    <div class="card">
+    <div class="card" id="fi-transport">
       <div class="card-title"><span class="card-title-icon">🚌</span>Getting Around Helsinki</div>
       <div class="transport-item">
         <span class="transport-icon">🚋</span>
@@ -666,7 +732,7 @@
     </div>
 
     <!-- EVENTS -->
-    <div class="card span-2">
+    <div class="card span-2" id="fi-events">
       <div class="card-title"><span class="card-title-icon">📅</span>Your Helsinki Week — May 12–16, 2026</div>
 
       <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid #BBF7D0">
@@ -771,7 +837,7 @@
     </div>
 
     <!-- NUUKSIO -->
-    <div class="card span-2">
+    <div class="card span-2" id="fi-nuuksio">
       <div class="card-title"><span class="card-title-icon">🌲</span>Nuuksio National Park — Saturday May 16</div>
       <div class="alert alert-green" style="margin-bottom:16px">
         <span class="alert-icon">🇫🇮</span>
@@ -819,7 +885,7 @@
     </div>
 
     <!-- HOTEL HELSINKI -->
-    <div class="card span-2">
+    <div class="card span-2" id="fi-hotel">
       <div class="card-title"><span class="card-title-icon">🏨</span>Your Base — Scandic Helsinki Hub, Annankatu 18</div>
       <div class="alert alert-green" style="margin-bottom:16px">
         <span class="alert-icon">📍</span>
@@ -866,7 +932,7 @@
       </div>
     </div>
 
-    <div class="card span-2">
+    <div class="card span-2" id="fi-nightlife">
       <div class="card-title"><span class="card-title-icon">🌙</span>Nightlife — Helsinki After Dark</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div>
@@ -912,10 +978,23 @@
     </div>
   </div>
 
+  <div class="jump-nav ee">
+    <div class="jump-nav-inner">
+      <div class="jn-label">Jump to section</div>
+      <a class="jn-btn" href="#ee-orientation">🏰 Two Tallinns</a>
+      <a class="jn-btn" href="#ee-essentials">⚡ Essentials</a>
+      <a class="jn-btn" href="#ee-oldtown">🏰 Old Town</a>
+      <a class="jn-btn" href="#ee-telliskivi">🎨 Telliskivi</a>
+      <a class="jn-btn" href="#ee-food">🍽 Food</a>
+      <a class="jn-btn" href="#ee-culture">🧭 Culture</a>
+      <a class="jn-btn" href="#ee-events">📅 Your Day + Ferry</a>
+    </div>
+  </div>
+
   <div class="content-grid ee">
 
     <!-- ORIENTATION -->
-    <div class="card span-2">
+    <div class="card span-2" id="ee-orientation">
       <div class="card-title"><span class="card-title-icon">🏰</span>Two Tallinns — Your Essential Frame</div>
       <div class="alert alert-blue" style="margin-bottom:16px">
         <span class="alert-icon">⏱</span>
@@ -936,7 +1015,7 @@
     </div>
 
     <!-- QUICK FACTS -->
-    <div class="card">
+    <div class="card" id="ee-essentials">
       <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
       <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Euro (€) — fully cashless</span></div>
       <div class="fact-row"><span class="fact-label">Language</span><span class="fact-val">Estonian / English (widespread)</span></div>
@@ -959,7 +1038,7 @@
     </div>
 
     <!-- OLD TOWN -->
-    <div class="card">
+    <div class="card" id="ee-oldtown">
       <div class="card-title"><span class="card-title-icon">🏰</span>Old Town Must-Sees</div>
       <ul class="item-list">
         <li><span class="dot"></span><div><strong>Town Hall Square (Raekoja plats)</strong> — The medieval heart. Morning coffee here before crowds = magic.</div></li>
@@ -972,7 +1051,7 @@
     </div>
 
     <!-- TELLISKIVI -->
-    <div class="card">
+    <div class="card" id="ee-telliskivi">
       <div class="card-title"><span class="card-title-icon">🎨</span>Telliskivi — The Local's Tallinn</div>
       <ul class="item-list">
         <li><span class="dot"></span><div><strong>Fotografiska Tallinn</strong> — World-class rotating photography museum. The Michelin-noted restaurant is also excellent even without a museum ticket.</div></li>
@@ -985,7 +1064,7 @@
     </div>
 
     <!-- FOOD -->
-    <div class="card">
+    <div class="card" id="ee-food">
       <div class="card-title"><span class="card-title-icon">🍽</span>Estonian Food — What to Eat</div>
       <div class="food-item">
         <div class="food-name">Black Rye Bread</div>
@@ -1008,7 +1087,7 @@
     </div>
 
     <!-- CULTURE -->
-    <div class="card">
+    <div class="card" id="ee-culture">
       <div class="card-title"><span class="card-title-icon">🧭</span>Estonian Culture — Key Things to Know</div>
       <ul class="item-list">
         <li><span class="dot"></span><div><strong>Singing Nation</strong> — Estonia won its independence partly through a "Singing Revolution" (1987–1991) where 300,000 people gathered to sing national songs. Estonians take their choral traditions seriously.</div></li>
@@ -1019,7 +1098,7 @@
     </div>
 
     <!-- EVENTS -->
-    <div class="card span-2">
+    <div class="card span-2" id="ee-events">
       <div class="card-title"><span class="card-title-icon">📅</span>Your Day in Tallinn — May 17, 2026 + The Overnight Ferry</div>
       <div class="alert alert-blue" style="margin-bottom:14px">
         <span class="alert-icon">⏱</span>
@@ -1085,10 +1164,27 @@
     </div>
   </div>
 
+  <div class="jump-nav se">
+    <div class="jump-nav-inner">
+      <div class="jn-label">Jump to section</div>
+      <a class="jn-btn" href="#se-essentials">⚡ Essentials</a>
+      <a class="jn-btn" href="#se-budget">💶 Budget</a>
+      <a class="jn-btn" href="#se-culture">🧭 Culture</a>
+      <a class="jn-btn" href="#se-fika">☕ Fika</a>
+      <a class="jn-btn" href="#se-neighborhoods">🗺 Neighborhoods</a>
+      <a class="jn-btn" href="#se-mustsee">📍 Must-See</a>
+      <a class="jn-btn" href="#se-food">🍽 Food</a>
+      <a class="jn-btn" href="#se-nightlife">🌙 Nightlife</a>
+      <a class="jn-btn" href="#se-events">📅 Events</a>
+      <a class="jn-btn" href="#se-hotel">🏨 Your Hotel</a>
+      <a class="jn-btn" href="#se-transport">🚌 Transport</a>
+    </div>
+  </div>
+
   <div class="content-grid se">
 
     <!-- QUICK FACTS -->
-    <div class="card">
+    <div class="card" id="se-essentials">
       <div class="card-title"><span class="card-title-icon">⚡</span>Survival Essentials</div>
       <div class="fact-row"><span class="fact-label">Currency</span><span class="fact-val">Swedish Krona (SEK)</span></div>
       <div class="fact-row"><span class="fact-label">$1 USD ≈</span><span class="fact-val">~10.5 SEK (check rate)</span></div>
@@ -1099,7 +1195,7 @@
     </div>
 
     <!-- BUDGET -->
-    <div class="card">
+    <div class="card" id="se-budget">
       <div class="card-title"><span class="card-title-icon">💶</span>Budget in USD (approx.)</div>
       <div class="fact-row"><span class="fact-label">Coffee + pastry (fika)</span><span class="fact-val">$8–12</span></div>
       <div class="fact-row"><span class="fact-label">Lunch, good spot</span><span class="fact-val">$18–28</span></div>
@@ -1111,7 +1207,7 @@
     </div>
 
     <!-- CULTURE -->
-    <div class="card span-2">
+    <div class="card span-2" id="se-culture">
       <div class="card-title"><span class="card-title-icon">🧭</span>Swedish Culture — What You Need to Know</div>
       <div class="dos-donts">
         <div class="do-col">
@@ -1140,7 +1236,7 @@
     </div>
 
     <!-- FIKA EXPLAINED -->
-    <div class="card">
+    <div class="card" id="se-fika">
       <div class="card-title"><span class="card-title-icon">☕</span>Fika — Sweden's Most Important Concept</div>
       <div class="alert alert-blue" style="margin-bottom:14px">
         <span class="alert-icon">💡</span>
@@ -1154,7 +1250,7 @@
     </div>
 
     <!-- NEIGHBORHOODS -->
-    <div class="card">
+    <div class="card" id="se-neighborhoods">
       <div class="card-title"><span class="card-title-icon">🗺</span>Stockholm's Islands — Where to Go</div>
       <div class="hood">
         <div class="hood-name">Gamla Stan (Old Town)</div>
@@ -1179,7 +1275,7 @@
     </div>
 
     <!-- MUST SEE -->
-    <div class="card">
+    <div class="card" id="se-mustsee">
       <div class="card-title"><span class="card-title-icon">📍</span>Don't Miss — Stockholm Experiences</div>
       <ul class="item-list">
         <li><span class="dot"></span><div><strong>Vasa Museum</strong> — A fully intact 17th-century warship raised from the seabed after 333 years. The most visited museum in Scandinavia. Profoundly mind-blowing. Non-negotiable.</div></li>
@@ -1192,7 +1288,7 @@
     </div>
 
     <!-- FOOD -->
-    <div class="card">
+    <div class="card" id="se-food">
       <div class="card-title"><span class="card-title-icon">🍽</span>Swedish Food — What to Eat</div>
       <div class="food-item">
         <div class="food-name">Swedish Meatballs (Köttbullar)</div>
@@ -1215,7 +1311,7 @@
     </div>
 
     <!-- NIGHTLIFE -->
-    <div class="card">
+    <div class="card" id="se-nightlife">
       <div class="card-title"><span class="card-title-icon">🌙</span>Nightlife — Stockholm After Dark</div>
       <div class="alert alert-yellow" style="margin-bottom:14px">
         <span class="alert-icon">⚠️</span>
@@ -1230,7 +1326,7 @@
     </div>
 
     <!-- EVENTS -->
-    <div class="card span-2">
+    <div class="card span-2" id="se-events">
       <div class="card-title"><span class="card-title-icon">📅</span>What's On — Stockholm, May 19–22, 2026</div>
       <div class="alert alert-blue" style="margin-bottom:14px">
         <span class="alert-icon">🌅</span>
@@ -1264,7 +1360,7 @@
     </div>
 
     <!-- HOTEL STOCKHOLM -->
-    <div class="card span-2">
+    <div class="card span-2" id="se-hotel">
       <div class="card-title"><span class="card-title-icon">🏨</span>Your Base — Scandic Grand Central, Vasagatan/Kungsgatan corner</div>
       <div class="alert alert-green" style="margin-bottom:16px">
         <span class="alert-icon">📍</span>
@@ -1311,7 +1407,7 @@
     </div>
 
     <!-- TRANSPORT -->
-    <div class="card span-2">
+    <div class="card span-2" id="se-transport">
       <div class="card-title"><span class="card-title-icon">🚌</span>Getting Around Stockholm</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
         <div>
